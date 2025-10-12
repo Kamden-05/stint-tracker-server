@@ -3,14 +3,15 @@ from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 from app.models import BaseModel
 from contextlib import contextmanager
+from app.config import settings
 
 url = URL.create(
-    drivername="postgresql",
-    username="postgres",
-    host="127.0.0.1",
-    port="5432",
-    password="portland25",
-    database="test",
+    drivername=settings.POSTGRES_DRIVER_NAME,
+    username=settings.POSTGRES_USERNAME,
+    host=settings.POSTGRES_HOST,
+    port=settings.POSTGRES_PORT,
+    password=settings.POSTGRES_PASSWORD,
+    database=settings.POSTGRES_DB,
 )
 
 engine = create_engine(url, echo=True)
@@ -19,6 +20,8 @@ BaseModel.metadata.create_all(engine)
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
 
 """For use in FastAPI dependency injections"""
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -26,7 +29,10 @@ def get_db():
     finally:
         db.close()
 
+
 """For non FastAPI usage"""
+
+
 @contextmanager
 def get_db_context():
     db = SessionLocal()

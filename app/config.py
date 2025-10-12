@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import os
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file="", env_file_encoding='utf-8',case_sensitive=True)
@@ -9,7 +10,7 @@ class Settings(BaseSettings):
     POSTGRES_USERNAME: str
     POSTGRES_PASSWORD: str
     POSTGRES_HOST: str
-    POSTGRES_PORT: str
+    POSTGRES_PORT: int
     POSTGRES_DB: str
 
 class TestSettings(Settings):
@@ -36,3 +37,7 @@ def get_settings(env: str = 'dev') -> Settings:
         return DevSettings()
     
     raise ValueError("Invalid Environment. Must be 'test', 'local', or 'dev'")
+
+_env = os.environ.get("ENV", "local")
+
+settings = get_settings(env=_env)
