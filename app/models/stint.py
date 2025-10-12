@@ -18,11 +18,6 @@ class Stint(Base):
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]
     length: Mapped[Optional[float]]
-    laps_completed: Mapped[int]
-    avg_lap: Mapped[Optional[float]]
-    fastest_lap: Mapped[Optional[float]]
-    out_lap: Mapped[Optional[float]]
-    in_lap: Mapped[Optional[float]]
     start_position: Mapped[int]
     end_position: Mapped[Optional[int]]
     start_fuel: Mapped[float]
