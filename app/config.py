@@ -1,5 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
+from app.logger import get_logger
+
+logger = get_logger(__name__)
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file="", env_file_encoding='utf-8',case_sensitive=True)
@@ -29,15 +32,17 @@ class DevSettings(Settings):
     ENV: str = 'dev'
 
 def get_settings(env: str = 'dev') -> Settings:
-    if env.lower() == 'test':
-        return TestSettings()
-    elif env.lower() == 'local':
-        return LocalSettings()
-    elif env.lower() == 'dev':
-        return DevSettings()
-    
-    raise ValueError("Invalid Environment. Must be 'test', 'local', or 'dev'")
+    try:
+        if env.lower() == 'test':
+            return TestSettings()
+        elif env.lower() == 'local':
+            return LocalSettings()
+        elif env.lower() == 'dev':
+            return DevSettings()
+    except Exception:
+        logger.exception(f'Failed to load settings for environment {env}')
+        raise
 
 _env = os.environ.get("ENV", "local")
-
 settings = get_settings(env=_env)
+logger.info(f'Loaded {settings.ENV} environment settings from')

@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from app.models import BaseModel
 from contextlib import contextmanager
 from app.config import settings
-import logging
+from app.logger import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 url = URL.create(
     drivername=settings.POSTGRES_DRIVER_NAME,
@@ -18,7 +18,7 @@ url = URL.create(
 )
 
 try:
-    engine = create_engine(url, echo=True)
+    engine = create_engine(url)
     logger.info("Database engine created successfully")
 except:
     logger.exception("Failed to create database engine")
