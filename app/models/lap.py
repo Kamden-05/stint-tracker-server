@@ -12,7 +12,7 @@ class Lap(Base):
 
     lap_id: Mapped[int] = mapped_column(primary_key=True)
     stint_id: Mapped[int] = mapped_column(ForeignKey("stint.id"))
-    stint: Mapped['Stint'] = relationship(back_populates='stint')
+    stint: Mapped['Stint'] = relationship(back_populates='laps')
     number: Mapped[int]
     time: Mapped[float]
     incidents: Mapped[Optional[int]]

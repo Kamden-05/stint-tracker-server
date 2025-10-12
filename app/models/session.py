@@ -14,7 +14,7 @@ class Session(Base):
     session_type: Mapped[int]
     session_date: Mapped[datetime] = mapped_column(DateTime)
     sim_time: Mapped[datetime] = mapped_column(TIMESTAMP)
-    stints: Mapped[List["Stint"]] = relationship(back_populates='stint')
+    stints: Mapped[List["Stint"]] = relationship(back_populates='session')
     track: Mapped[str] = mapped_column(String)
     car_class: Mapped[str] = mapped_column(String)
     car = Mapped[str] = mapped_column(String)
