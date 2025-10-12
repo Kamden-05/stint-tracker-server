@@ -6,7 +6,7 @@ from app.database.base_class import Base
 
 
 class Lap(Base):
-    __tablename__ = "Lap"
+    __tablename__ = "lap"
 
     lap_id: Mapped[int] = mapped_column(primary_key=True)
     stint_id: Mapped[int] = mapped_column(ForeignKey("stint.id"))
