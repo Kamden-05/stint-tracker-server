@@ -1,6 +1,6 @@
 from sqlalchemy import ForeignKey, String, TIMESTAMP
-from sqlalchemy.orm import Mapped, mapped_column
-from typing import Optional
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import List, Optional
 from datetime import datetime
 from app.database.base_class import Base
 
@@ -8,7 +8,8 @@ class Stint(Base):
     __tablename__ = "stint"
 
     stint_id: Mapped[int] = mapped_column(primary_key=True)
-    session_id: Mapped[int] = mapped_column(ForeignKey("session.id") )
+    session_id: Mapped[int] = mapped_column(ForeignKey("session.id"))
+    laps: Mapped[List['lap']] = relationship()
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]
     length: Mapped[Optional[float]]
