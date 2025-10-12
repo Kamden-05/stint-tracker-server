@@ -2,7 +2,7 @@ from fastapi import APIRouter, FastAPI
 from stint_core.stint_base import Stint
 from app.database.db import get_db
 
-router = APIRouter(prefix='/stints')
+router = APIRouter(prefix='/stints', tags=['stints'])
 
 @router.post("/{session_id}")
 def create_stint(session_id: int, stint: Stint):

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, FastAPI
 from stint_core.stint_base import Stint
 
-router = APIRouter(prefix="/stints")
+router = APIRouter(prefix="/sessions")
 
 
 @router.post("/{session_id}")
