@@ -7,7 +7,7 @@ class Settings(BaseSettings):
 
     POSTGRES_DRIVER_NAME: str
     POSTGRES_USERNAME: str
-    POSTGRES_PASSWOR: str
+    POSTGRES_PASSWORD: str
     POSTGRES_HOST: str
     POSTGRES_PORT: str
     POSTGRES_DB: str
@@ -18,12 +18,12 @@ class TestSettings(Settings):
     ENV: str = 'test'
 
 class LocalSettings(Settings):
-    model_config = SettingsConfigDict(env_file='./env.local', env_file_encoding='utf-8', case_sensitive=True)
+    model_config = SettingsConfigDict(env_file='./.env.local', env_file_encoding='utf-8', case_sensitive=True)
 
     ENV: str = 'local'
 
 class DevSettings(Settings):
-    model_config = SettingsConfigDict(env_file='./env.dev', env_file_encoding='utf-8', case_sensitive=True)
+    model_config = SettingsConfigDict(env_file='./.env.dev', env_file_encoding='utf-8', case_sensitive=True)
 
     ENV: str = 'dev'
 
@@ -37,3 +37,4 @@ def get_settings(env: str = 'dev') -> Settings:
     
     raise ValueError("Invalid Environment. Must be 'test', 'local', or 'dev'")
     
+print(LocalSettings().model_dump())
