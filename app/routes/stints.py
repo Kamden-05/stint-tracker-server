@@ -1,5 +1,6 @@
 from fastapi import APIRouter, FastAPI
 from stint_core.stint_base import Stint
+from app.database.db import get_db
 
 router = APIRouter(prefix='/stints')
 
