@@ -36,5 +36,3 @@ def get_settings(env: str = 'dev') -> Settings:
         return DevSettings()
     
     raise ValueError("Invalid Environment. Must be 'test', 'local', or 'dev'")
-    
-print(LocalSettings().model_dump())
