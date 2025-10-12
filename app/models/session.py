@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class Session(BaseModel):
     __tablename__ = "session"
 
-    session_id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     session_type: Mapped[int]
     session_date: Mapped[datetime] = mapped_column(DateTime)
     sim_time: Mapped[datetime] = mapped_column(TIMESTAMP)

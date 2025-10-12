@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 class Lap(BaseModel):
     __tablename__ = "lap"
 
-    lap_id: Mapped[int] = mapped_column(primary_key=True)
-    stint_id: Mapped[int] = mapped_column(ForeignKey("stint.stint_id"))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    stint_id: Mapped[int] = mapped_column(ForeignKey("stint.id"))
     stint: Mapped['Stint'] = relationship(back_populates='laps')
     number: Mapped[int]
     time: Mapped[float]
