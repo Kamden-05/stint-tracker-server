@@ -4,6 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from app.models import BaseModel
 from contextlib import contextmanager
 from app.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 url = URL.create(
     drivername=settings.POSTGRES_DRIVER_NAME,
@@ -14,7 +17,13 @@ url = URL.create(
     database=settings.POSTGRES_DB,
 )
 
-engine = create_engine(url, echo=True)
+try:
+    engine = create_engine(url, echo=True)
+    logger.info("Database engine created successfully")
+except:
+    logger.exception("Failed to create database engine")
+    raise
+
 BaseModel.metadata.create_all(engine)
 
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
@@ -24,10 +33,12 @@ SessionLocal = sessionmaker(autoflush=False, bind=engine)
 
 def get_db():
     db = SessionLocal()
+    logger.debug("FastAPI DB Session started")
     try:
         yield db
     finally:
         db.close()
+        logger.debug("FastAPI DB Session closed")
 
 
 """For non FastAPI usage"""
@@ -36,10 +47,13 @@ def get_db():
 @contextmanager
 def get_db_context():
     db = SessionLocal()
+    logger.debug("DB Session Started")
     try:
         yield db
     except Exception:
         db.rollback()
+        logger.exception("DB Session rolled back due to error")
         raise
     finally:
         db.close()
+        logger.debug("DB session closed")
