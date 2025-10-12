@@ -1,20 +1,20 @@
 from fastapi import APIRouter, FastAPI
-from stint_core.stint_base import Stint
+from stint_core.stint_base import Session
 
-router = APIRouter(prefix="/sessions")
+router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 
 @router.post("/{session_id}")
-def create_stint(session_id: int, stint: Stint):
+def create_session(session_id: int, session: Session):
 
-    return stint
+    return session
 
 
 @router.put("/{session_id}/update/{stint_id}")
-def update_stint(session_id: int, stint: Stint):
-    return stint
+def update_session(session_id: int, session: Session):
+    return session
 
 
 @router.put("/{session_id}/end/{stint_id}")
-def end_stint(session_id: int, stint: Stint):
-    return stint
+def end_session(session_id: int, session: Session):
+    return session
