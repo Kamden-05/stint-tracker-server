@@ -45,4 +45,4 @@ def get_settings(env: str = 'dev') -> Settings:
 
 _env = os.environ.get("ENV", "local")
 settings = get_settings(env=_env)
-logger.info(f'Loaded {settings.ENV} environment settings from')
+logger.info(f'Loaded {settings.ENV} environment settings')
