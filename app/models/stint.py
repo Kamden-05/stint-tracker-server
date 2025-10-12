@@ -11,7 +11,7 @@ class Stint(BaseModel):
     __tablename__ = "stint"
 
     stint_id: Mapped[int] = mapped_column(primary_key=True)
-    session_id: Mapped[int] = mapped_column(ForeignKey("session.id"))
+    session_id: Mapped[int] = mapped_column(ForeignKey("session.session_id"))
     session: Mapped['Session'] = relationship(back_populates='stints')
     laps: Mapped[List['Lap']] = relationship(back_populates='stint')
     driver_name: Mapped[str] = mapped_column(String)
