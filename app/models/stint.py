@@ -1,14 +1,19 @@
 from sqlalchemy import ForeignKey, String, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
 from app.database.base_class import Base
+
+if TYPE_CHECKING:
+    from .lap import Lap
+    from .session import Session
 
 class Stint(Base):
     __tablename__ = "stint"
 
     stint_id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[int] = mapped_column(ForeignKey("session.id"))
+    session: Mapped['Session'] = relationship(back_populates='session')
     laps: Mapped[List['Lap']] = relationship(back_populates='lap')
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]

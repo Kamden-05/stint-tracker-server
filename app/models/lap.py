@@ -1,9 +1,11 @@
 from sqlalchemy import ForeignKey, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from app.database.base_class import Base
 
+if TYPE_CHECKING:
+    from .stint import Stint
 
 class Lap(Base):
     __tablename__ = "lap"
