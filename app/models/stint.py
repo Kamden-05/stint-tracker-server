@@ -9,7 +9,7 @@ class Stint(Base):
 
     stint_id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[int] = mapped_column(ForeignKey("session.id"))
-    laps: Mapped[List['lap']] = relationship()
+    laps: Mapped[List['Lap']] = relationship(back_populates='lap')
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]
     length: Mapped[Optional[float]]

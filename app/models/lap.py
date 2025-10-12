@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, TIMESTAMP
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional
 from datetime import datetime
 from app.database.base_class import Base
@@ -10,6 +10,7 @@ class Lap(Base):
 
     lap_id: Mapped[int] = mapped_column(primary_key=True)
     stint_id: Mapped[int] = mapped_column(ForeignKey("stint.id"))
+    stint: Mapped['Stint'] = relationship(back_populates='stint')
     number: Mapped[int]
     time: Mapped[float]
     incidents: Mapped[Optional[int]]
