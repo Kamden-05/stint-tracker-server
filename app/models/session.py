@@ -17,6 +17,6 @@ class Session(BaseModel):
     stints: Mapped[List["Stint"]] = relationship(back_populates='session')
     track: Mapped[str] = mapped_column(String)
     car_class: Mapped[str] = mapped_column(String)
-    car = Mapped[str] = mapped_column(String)
+    car: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
     updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
