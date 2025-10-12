@@ -2,13 +2,12 @@ from sqlalchemy import ForeignKey, String, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
-from app.database.base_class import Base
-
+from . import BaseModel
 if TYPE_CHECKING:
     from .lap import Lap
     from .session import Session
 
-class Stint(Base):
+class Stint(BaseModel):
     __tablename__ = "stint"
 
     stint_id: Mapped[int] = mapped_column(primary_key=True)

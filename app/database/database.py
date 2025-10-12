@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from app.database.base_class import Base
+from app.models import BaseModel
 
 engine = create_engine("sqlite://", echo=True)
-Base.metadata.create_all()
+BaseModel.metadata.create_all(engine)
