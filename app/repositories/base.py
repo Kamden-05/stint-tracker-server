@@ -1,6 +1,7 @@
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Optional
 
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.logger import get_logger
@@ -18,6 +19,10 @@ class CRUDRepository:
     def __init__(self, model: Type[ModelType]):
         self.model = model
         self.name = model.__name__
+
+    def get_one(self, db: Session, *args, **kwargs) -> Optional[ModelType]:
+        logger.debug(f"Retrieving record for {self.model.__name__}")
+        return db.execute(select(self.model).where(**kwargs))
 
     def create(self, db: Session, obj: CreateSchemaType) -> Base:
         logger.debug(
