@@ -1,20 +1,14 @@
-from fastapi import APIRouter, FastAPI
-from stint_core.stint_base import Session
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+from stint_core.session_base import RaceSession
+from app.database.db import get_db
+from typing import Annotated
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
-
-@router.post("/{session_id}")
-def create_session(session_id: int, session: Session):
-
-    return session
+DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.put("/{session_id}/update/{stint_id}")
-def update_session(session_id: int, session: Session):
-    return session
-
-
-@router.put("/{session_id}/end/{stint_id}")
-def end_session(session_id: int, session: Session):
-    return session
+@router.post("/{session_id}", status_code=status.HTTP_201_CREATED)
+def create_session(session: RaceSession, db: DbSession):
+    pass

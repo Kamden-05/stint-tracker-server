@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
-from app.models import BaseModel
+from app.models import Base
 from contextlib import contextmanager
 from app.config import settings
 from app.logger import get_logger
@@ -24,7 +24,7 @@ except:
     logger.exception("Failed to create database engine")
     raise
 
-BaseModel.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
 

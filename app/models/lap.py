@@ -2,17 +2,18 @@ from sqlalchemy import ForeignKey, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from . import BaseModel
+from . import Base
 
 if TYPE_CHECKING:
     from .stint import Stint
 
-class Lap(BaseModel):
+
+class Lap(Base):
     __tablename__ = "lap"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     stint_id: Mapped[int] = mapped_column(ForeignKey("stint.id"))
-    stint: Mapped['Stint'] = relationship(back_populates='laps')
+    stint: Mapped["Stint"] = relationship(back_populates="laps")
     number: Mapped[int]
     time: Mapped[float]
     incidents: Mapped[Optional[int]]

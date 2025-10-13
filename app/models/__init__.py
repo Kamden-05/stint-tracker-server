@@ -1,7 +1,9 @@
 from sqlalchemy.orm import DeclarativeBase
 
-class BaseModel(DeclarativeBase):
+
+class Base(DeclarativeBase):
     pass
+
 
 from .lap import Lap
 from .stint import Stint
