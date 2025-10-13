@@ -16,6 +16,7 @@ class Session(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     session_type: Mapped[int]
     session_date: Mapped[datetime] = mapped_column(DateTime)
+    sim_date: Mapped[datetime] = mapped_column(DateTime)
     sim_time: Mapped[datetime] = mapped_column(TIMESTAMP)
     stints: Mapped[List["Stint"]] = relationship(back_populates="session")
     track: Mapped[str] = mapped_column(String)

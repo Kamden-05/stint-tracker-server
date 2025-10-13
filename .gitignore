@@ -7,3 +7,4 @@ app/services/__pycache__
 .env.local
 .env.dev
 .env.test
+app/repositories/__pycache__

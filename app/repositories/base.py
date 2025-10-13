@@ -1,8 +1,10 @@
-from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from app.models import Base
 from typing import Type, TypeVar
+
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from app.logger import get_logger
+from app.models import Base
 
 logger = get_logger(__name__)
 
