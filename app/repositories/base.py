@@ -22,7 +22,8 @@ class CRUDRepository:
 
     def get_one(self, db: Session, *args, **kwargs) -> Optional[ModelType]:
         logger.debug(f"Retrieving record for {self.model.__name__}")
-        return db.execute(select(self.model).where(**kwargs))
+        stmt = select(self.model).where(*args).filter_by(**kwargs)
+        return db.scalars(stmt).first()
 
     def create(self, db: Session, obj: CreateSchemaType) -> Base:
         logger.debug(
