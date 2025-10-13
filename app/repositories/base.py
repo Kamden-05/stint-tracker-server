@@ -24,7 +24,7 @@ class CRUDRepository:
             f"Creating record for {self.model.__name__} with data {obj.model_dump()}"
         )
 
-        data = obj.model_dump()
+        data = obj.model_dump(by_alias=True)
         db_obj = self.model(**data)
         db.add(db_obj)
         db.commit()
@@ -37,7 +37,7 @@ class CRUDRepository:
             f"Creating record for {self.model.__name__} with data {obj.model_dump()}"
         )
 
-        data = obj.model_dump(exclude_unset=True)
+        data = obj.model_dump(by_alias=True, exclude_unset=True)
 
         for field, value in data.items():
             setattr(db_obj, field, value)

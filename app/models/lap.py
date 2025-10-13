@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import TIMESTAMP, ForeignKey
+from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
@@ -22,5 +23,5 @@ class Lap(Base):
     start_position: Mapped[Optional[int]]
     end_position: Mapped[Optional[int]]
     pit: Mapped[Optional[bool]]
-    created_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
-    updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())

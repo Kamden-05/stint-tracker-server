@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import TIMESTAMP, ForeignKey, String
+from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
@@ -30,5 +31,5 @@ class Stint(Base):
     repairs: Mapped[Optional[bool]]
     pit_service_duration: Mapped[Optional[float]]
     incidents: Mapped[Optional[int]]
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
-    updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
