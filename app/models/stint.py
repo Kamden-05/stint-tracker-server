@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import TIMESTAMP, ForeignKey, String
+from sqlalchemy import TIMESTAMP, ForeignKey, String, UniqueConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,9 +16,10 @@ class Stint(Base):
     __tablename__ = "stint"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    session_id: Mapped[int] = mapped_column(ForeignKey("session.id"))
+    session_id: Mapped[int] = mapped_column(ForeignKey("session.id", ondelete='CASCADE'))
     session: Mapped["Session"] = relationship(back_populates="stints")
     laps: Mapped[List["Lap"]] = relationship(back_populates="stint")
+    number: Mapped[int]
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]
     length: Mapped[Optional[float]]
@@ -33,3 +34,7 @@ class Stint(Base):
     incidents: Mapped[Optional[int]]
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
     updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint('session_id', 'number', name='unique_stint_per_session'),
+    )
