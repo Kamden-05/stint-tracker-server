@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int
     POSTGRES_DB: str
 
+    SERVICE_ACCOUNT_FILE: str
+
 class TestSettings(Settings):
     model_config = SettingsConfigDict(env_file="./.env.test", env_file_encoding='utf-8',case_sensitive=True)
 
