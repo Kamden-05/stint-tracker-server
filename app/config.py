@@ -1,5 +1,7 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from app.logger import get_logger
 
 logger = get_logger(__name__)

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from .routes import sessions, stints, laps
+
+from .routes import laps, sessions, stints
 
 app = FastAPI()
 

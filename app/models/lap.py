@@ -1,7 +1,9 @@
-from sqlalchemy import ForeignKey, TIMESTAMP
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import Optional, TYPE_CHECKING
 from datetime import datetime
+from typing import TYPE_CHECKING, Optional
+
+from sqlalchemy import TIMESTAMP, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from . import Base
 
 if TYPE_CHECKING:

@@ -1,10 +1,12 @@
+from contextlib import contextmanager
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
-from app.models import Base
-from contextlib import contextmanager
+
 from app.config import settings
 from app.logger import get_logger
+from app.models import Base
 
 logger = get_logger(__name__)
 
