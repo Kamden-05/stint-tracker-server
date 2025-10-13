@@ -20,5 +20,12 @@ def create_lap(stint_id: int, lap_create: LapCreate, db: DbSession):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'Stint with id {stint_id} not found'
         )
-    lap = lap_crud.create(db, lap_create)
+    
+    try:
+        lap = lap_crud.create(db, lap_create)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f'Lap with lap number {lap_create.lap_number} already exists'
+        )
     return lap
