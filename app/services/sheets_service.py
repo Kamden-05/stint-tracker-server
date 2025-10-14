@@ -1,38 +1,36 @@
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from google.oauth2 import service_account
+
+from app.config import settings
 
 
-class Sheets:
-    def __init__(self, service_account_file: str, sheet_id: str):
-        self.service_account_file = service_account_file
-        self.creds = service_account.Credentials.from_service_account_file(
-            self.service_account_file,
-            scopes=["https://www.googleapis.com/auth/spreadsheets"],
-        )
-        self.sheet_id = sheet_id
+def update_sheet(
+    sheet_id: str, range_name: str, values: list
+) -> None:
 
-    def append_row(
-        self, range_name: str, value_input_option: str, values: list
-    ) -> None:
+    creds = service_account.Credentials.from_service_account_file(
+        settings.SERVICE_ACCOUNT_FILE,
+        scopes=["https://www.googleapis.com/auth/spreadsheets"],
+    )
 
-        try:
-            service = build("sheets", "v4", credentials=self.creds)
+    try:
+        service = build("sheets", "v4", credentials=creds)
 
-            body = {"values": values}
-            result = (
-                service.spreadsheets()
-                .values()
-                .append(
-                    spreadsheetId=self.sheet_id,
-                    range=range_name,
-                    valueInputOption=value_input_option,
-                    body=body,
-                )
-                .execute()
+        body = {"values": values}
+        result = (
+            service.spreadsheets()
+            .values()
+            .append(
+                spreadsheetId=sheet_id,
+                range=range_name,
+                valueInputOption='RAW',
+                body=body,
             )
-            print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
-            return result
+            .execute()
+        )
+        print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
+        return result
 
-        except HttpError as error:
-            print(f"An error occurred: {error}")
+    except HttpError as error:
+        print(f"An error occurred: {error}")
