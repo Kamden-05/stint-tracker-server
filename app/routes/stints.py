@@ -40,9 +40,8 @@ def create_stint(
         ) from e
 
     if sheet_id is not None:
-        stint_data = stint_create.model_dump()
-        sheet_data = [list(stint_data.values())]
-        background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_data)
+        stints = stint_crud.get_many(db)
+        background_tasks.add_task(update_range, sheet_id, sheet_range, stints)
     return stint
 
 

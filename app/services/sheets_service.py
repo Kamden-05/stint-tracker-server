@@ -4,11 +4,12 @@ from googleapiclient.errors import HttpError
 
 from app.config import settings
 from app.logger import get_logger
-
+from app.models import Base
+from typing import List
 logger = get_logger(__name__)
 
 
-def update_range(sheet_id: str, range_name: str, values: list) -> None:
+def update_range(sheet_id: str, range_name: str, models: List[Base]) -> None:
 
     creds = service_account.Credentials.from_service_account_file(
         settings.SERVICE_ACCOUNT_FILE,
@@ -17,7 +18,11 @@ def update_range(sheet_id: str, range_name: str, values: list) -> None:
 
     try:
         service = build("sheets", "v4", credentials=creds)
-
+        
+        values = [list(col.name for col in models[0].__table__.columns)]
+        for model in models:
+            values.append(list(getattr(model, col.name) for col in models[0].__table__.columns))
+            
         body = {"values": values}
 
         result = (
