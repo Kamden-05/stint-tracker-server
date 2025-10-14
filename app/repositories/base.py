@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, Optional
+from typing import Type, TypeVar, Optional, List
 
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -24,6 +24,11 @@ class CRUDRepository:
         logger.debug(f"Retrieving record for {self.model.__name__}")
         stmt = select(self.model).where(*args).filter_by(**kwargs)
         return db.scalars(stmt).first()
+    
+    def get_many(self, db: Session, *args, skip: int = 0, limit: int = 100, **kwargs) -> List[ModelType]:
+        logger.debug(f'Retrieving records for {self.model.__name__} with skip {skip} and limit {limit}')
+        stmt = select(self.model).where(*args).filter_by(**kwargs).offset(skip).limit(limit)
+        return db.scalars(stmt).all()
 
     def create(self, db: Session, obj: CreateSchemaType) -> Base:
         logger.debug(
