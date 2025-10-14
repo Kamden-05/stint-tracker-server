@@ -14,6 +14,7 @@ router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
+
 @router.post("/")
 def create_stint(
     session_id: int,
@@ -40,7 +41,7 @@ def create_stint(
 
     if sheet_id is not None:
         stint_data = stint_create.model_dump()
-        sheet_data = [list(stint_data.keys()), list(stint_data.values())]
+        sheet_data = [list(stint_data.values())]
         background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_data)
     return stint
 
@@ -72,7 +73,7 @@ def update_stint(
 
     if sheet_id is not None:
         stint_data = stint_update.model_dump()
-        sheet_data = [list(stint_data.keys()), list(stint_data.values())]
+        sheet_values = [list(stint_data.keys()), list(stint_data.values())]
 
-        background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_data)
+        background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_values)
     return stint

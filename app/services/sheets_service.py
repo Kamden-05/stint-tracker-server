@@ -1,9 +1,12 @@
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from pydantic import BaseModel
 
 from app.config import settings
+from app.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 def update_range(sheet_id: str, range_name: str, values: list) -> None:
 
@@ -16,10 +19,11 @@ def update_range(sheet_id: str, range_name: str, values: list) -> None:
         service = build("sheets", "v4", credentials=creds)
 
         body = {"values": values}
+
         result = (
             service.spreadsheets()
             .values()
-            .append(
+            .update(
                 spreadsheetId=sheet_id,
                 range=range_name,
                 valueInputOption="RAW",
@@ -27,8 +31,10 @@ def update_range(sheet_id: str, range_name: str, values: list) -> None:
             )
             .execute()
         )
-        print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
+
+        logger.info(f"{(result.get('updates').get('updatedCells'))} cells appended.")
         return result
 
-    except HttpError as error:
-        print(f"An error occurred: {error}")
+    except HttpError as e:
+        logger.error(f"An error occurred: {str(e)}")
+        return e
