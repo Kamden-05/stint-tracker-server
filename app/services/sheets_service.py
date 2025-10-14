@@ -1,13 +1,11 @@
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from pydantic import BaseModel
 
 from app.config import settings
 
-
-def update_sheet(
-    sheet_id: str, range_name: str, values: list
-) -> None:
+def update_range(sheet_id: str, range_name: str, values: list) -> None:
 
     creds = service_account.Credentials.from_service_account_file(
         settings.SERVICE_ACCOUNT_FILE,
@@ -24,7 +22,7 @@ def update_sheet(
             .append(
                 spreadsheetId=sheet_id,
                 range=range_name,
-                valueInputOption='RAW',
+                valueInputOption="RAW",
                 body=body,
             )
             .execute()

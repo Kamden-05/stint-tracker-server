@@ -8,12 +8,11 @@ from app.database.db import get_db
 from app.models.session import Session as RaceSession
 from app.models.stint import Stint
 from app.repositories import session_crud, stint_crud
-from app.services.sheets_service import update_sheet
+from app.services.sheets_service import update_range
 
 router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints"])
 
 DbSession = Annotated[Session, Depends(get_db)]
-
 
 @router.post("/")
 def create_stint(
@@ -40,13 +39,21 @@ def create_stint(
         ) from e
 
     if sheet_id is not None:
-        values = [list(stint_create.model_dump().values())]
-        background_tasks.add_task(update_sheet, sheet_id, sheet_range, values)
+        stint_data = stint_create.model_dump()
+        sheet_data = [list(stint_data.keys()), list(stint_data.values())]
+        background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_data)
     return stint
 
 
-@router.post("/{stint_id}")
-def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
+@router.put("/{stint_id}")
+def update_stint(
+    stint_id: int,
+    stint_update: StintUpdate,
+    db: DbSession,
+    background_tasks: BackgroundTasks,
+    sheet_id: str = None,
+    sheet_range: str = None,
+):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
     if stint is None:
@@ -56,10 +63,16 @@ def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
         )
 
     try:
-        stint = stint_crud.update(db, stint_update)
+        stint = stint_crud.update(db, stint, stint_update)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Couldn't update stint with id {stint_id}. Error: {str(e)}",
         ) from e
+
+    if sheet_id is not None:
+        stint_data = stint_update.model_dump()
+        sheet_data = [list(stint_data.keys()), list(stint_data.values())]
+
+        background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_data)
     return stint
