@@ -7,7 +7,7 @@ from app.logger import get_logger
 from app.models import Base
 from typing import List
 
-from datetime import datetime
+from datetime import datetime, date, time
 
 logger = get_logger(__name__)
 
@@ -27,7 +27,7 @@ def update_range(sheet_id: str, range_name: str, models: List[Base]) -> None:
             row = []
             for col in model.__table__.columns:
                 value = getattr(model, col.name)
-                if isinstance(value, datetime):
+                if isinstance(value, datetime) or isinstance(value, date) or isinstance(value,time):
                    value = value.isoformat()
                 row.append(value)
             values.append(row)
