@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from stint_core.stint_base import StintCreate, StintUpdate
 
@@ -8,7 +8,6 @@ from app.database.db import get_db
 from app.models.session import Session as RaceSession
 from app.models.stint import Stint
 from app.repositories import session_crud, stint_crud
-from app.services.sheets_service import update_range
 
 router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints"])
 
@@ -19,10 +18,7 @@ DbSession = Annotated[Session, Depends(get_db)]
 def create_stint(
     session_id: int,
     stint_create: StintCreate,
-    db: DbSession,
-    background_tasks: BackgroundTasks,
-    sheet_id: str = None,
-    sheet_range: str = None,
+    db: DbSession
 ):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
@@ -38,9 +34,7 @@ def create_stint(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Stint with stint number {stint_create.stint_number} already exists",
         ) from e
-
-    if sheet_id is not None:
-        background_tasks.add_task(update_range, sheet_id, sheet_range, session.stints)
+    
     return stint
 
 
@@ -48,10 +42,7 @@ def create_stint(
 def update_stint(
     stint_id: int,
     stint_update: StintUpdate,
-    db: DbSession,
-    background_tasks: BackgroundTasks,
-    sheet_id: str = None,
-    sheet_range: str = None,
+    db: DbSession
 ):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
@@ -69,7 +60,4 @@ def update_stint(
             detail=f"Couldn't update stint with id {stint_id}. Error: {str(e)}",
         ) from e
 
-    if sheet_id is not None:
-        session = session_crud.get_one(db, RaceSession.id == stint.session_id)
-        background_tasks.add_task(update_range, sheet_id, sheet_range, session.stints)
     return stint
