@@ -6,6 +6,9 @@ from app.config import settings
 from app.logger import get_logger
 from app.models import Base
 from typing import List
+
+from datetime import datetime
+
 logger = get_logger(__name__)
 
 
@@ -21,9 +24,20 @@ def update_range(sheet_id: str, range_name: str, models: List[Base]) -> None:
         
         values = [list(col.name for col in models[0].__table__.columns)]
         for model in models:
-            values.append(list(getattr(model, col.name) for col in models[0].__table__.columns))
+            row = []
+            for col in model.__table__.columns:
+                value = getattr(model, col.name)
+                if isinstance(value, datetime):
+                   value = value.isoformat()
+                row.append(value)
+            values.append(row)
             
         body = {"values": values}
+
+        service.spreadsheets().values().clear(
+            spreadsheetId=sheet_id,
+            range=range_name,
+        ).execute()
 
         result = (
             service.spreadsheets()
@@ -37,9 +51,12 @@ def update_range(sheet_id: str, range_name: str, models: List[Base]) -> None:
             .execute()
         )
 
-        logger.info(f"{(result.get('updates').get('updatedCells'))} cells appended.")
+        logger.info(f"{(result.get('updatedCells'))} cells appended.")
         return result
 
     except HttpError as e:
         logger.error(f"An error occurred: {str(e)}")
         return e
+
+def update_stints():
+    pass
