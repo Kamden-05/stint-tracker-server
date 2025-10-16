@@ -70,8 +70,6 @@ def update_stint(
         ) from e
 
     if sheet_id is not None:
-        stint_data = stint_update.model_dump()
-        sheet_values = [list(stint_data.keys()), list(stint_data.values())]
-
-        background_tasks.add_task(update_range, sheet_id, sheet_range, sheet_values)
+        session = session_crud.get_one(db, RaceSession.id == stint.session_id)
+        background_tasks.add_task(update_range, sheet_id, sheet_range, session.stints)
     return stint
