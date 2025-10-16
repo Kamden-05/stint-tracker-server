@@ -19,7 +19,7 @@ class Stint(Base):
     session_id: Mapped[int] = mapped_column(ForeignKey("session.id", ondelete='CASCADE'))
     number: Mapped[int]
     session: Mapped["Session"] = relationship(back_populates="stints")
-    laps: Mapped[List["Lap"]] = relationship(back_populates="stint")
+    laps: Mapped[List["Lap"]] = relationship(back_populates="stint", order_by='Lap.number')
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]
     length: Mapped[Optional[float]]
