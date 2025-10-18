@@ -15,7 +15,6 @@ class Session(Base):
     __tablename__ = "session"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    session_type: Mapped[str] = mapped_column(String)
     session_date: Mapped[datetime] = mapped_column(Date)
     sim_date: Mapped[datetime] = mapped_column(Date)
     sim_time: Mapped[datetime] = mapped_column(Time)
