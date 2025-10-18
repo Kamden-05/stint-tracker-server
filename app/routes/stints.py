@@ -14,12 +14,20 @@ router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
+@router.get("/{stint_id}")
+def get_stint(session_id: int, stint_id: int, db: DbSession):
+    stint = stint_crud.get_one(db, Stint.id == stint_id)
+    if stint is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Stint with id {stint_id} not found",
+        )
+
+    return stint
+
+
 @router.post("/")
-def create_stint(
-    session_id: int,
-    stint_create: StintCreate,
-    db: DbSession
-):
+def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
     if session is None:
@@ -34,16 +42,12 @@ def create_stint(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Stint with stint number {stint_create.stint_number} already exists",
         ) from e
-    
+
     return stint
 
 
 @router.put("/{stint_id}")
-def update_stint(
-    stint_id: int,
-    stint_update: StintUpdate,
-    db: DbSession
-):
+def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
     if stint is None:
