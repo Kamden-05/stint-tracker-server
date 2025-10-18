@@ -9,12 +9,13 @@ class RaceSessionBase(BaseModel):
     sim_date: datetime.date
     sim_time: datetime.time
 
-    class Config:
-        from_attributes = True
-
 
 class RaceSessionRead(RaceSessionBase):
     id: int
 
+    class Config:
+        from_attributes = True
+
 class RaceSessionCreate(RaceSessionBase):
     id: int
+

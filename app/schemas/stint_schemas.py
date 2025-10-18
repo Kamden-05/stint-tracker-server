@@ -15,14 +15,14 @@ class StintBase(BaseModel):
     pit_service_duration: Optional[float] = None
     tire_change: Optional[bool] = None
 
-    class Config:
-        from_attributes = True
-
 
 class StintRead(StintBase):
     id: int
     session_id: int
     laps: List[Lap] = []
+
+    class Config:
+        from_attributes = True
 
 
 class StintCreate(StintBase):
