@@ -31,7 +31,7 @@ def get_sessions(
     return sessions
 
 
-@router.get("/{session_id}", status_code=status.HTTP_200_OK)
+@router.get("/{session_id}")
 def get_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
