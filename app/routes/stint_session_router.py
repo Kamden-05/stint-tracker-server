@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from stint_core.stint_base import StintCreate, StintUpdate
+from app.schemas.stint_base import StintCreate, StintUpdate
 
 from app.database.db import get_db
 from app.models.session_model import Session as RaceSession
