@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from . import Base
 
 if TYPE_CHECKING:
-    from .stint import Stint
+    from .stint_model import Stint
 
 
 class Session(Base):

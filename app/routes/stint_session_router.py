@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from stint_core.stint_base import StintCreate, StintUpdate
 
 from app.database.db import get_db
-from app.models.session import Session as RaceSession
-from app.models.stint import Stint
+from app.models.session_model import Session as RaceSession
+from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
 router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints"])

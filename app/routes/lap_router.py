@@ -4,7 +4,7 @@ from app.database.db import get_db
 from typing import Annotated
 from sqlalchemy.orm import Session
 from app.repositories import stint_crud, lap_crud
-from app.models.stint import Stint
+from app.models.stint_model import Stint
 
 router = APIRouter(prefix='/stints/{stint_id}/laps', tags=['laps'])
 

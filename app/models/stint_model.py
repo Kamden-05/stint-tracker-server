@@ -8,8 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from . import Base
 
 if TYPE_CHECKING:
-    from .lap import Lap
-    from .session import Session
+    from .lap_model import Lap
+    from .session_model import Session
 
 
 class Stint(Base):
