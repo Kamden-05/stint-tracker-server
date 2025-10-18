@@ -25,6 +25,17 @@ def get_stint(session_id: int, stint_id: int, db: DbSession):
 
     return stint
 
+@router.get('/')
+def get_stints_for_session(session_id: int, db: DbSession):
+    session = session_crud.get_one(db, RaceSession.id == session_id)
+
+    if session is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Session with {session_id} not found'
+        )
+    
+    return session.stints
 
 @router.post("/")
 def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
@@ -47,9 +58,10 @@ def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
 
 
 @router.put("/{stint_id}")
-def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
+def update_stint(session_id: int, stint_id: int, stint_update: StintUpdate, db: DbSession):
+    
     stint = stint_crud.get_one(db, Stint.id == stint_id)
-
+     
     if stint is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
