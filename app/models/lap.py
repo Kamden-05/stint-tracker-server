@@ -19,10 +19,6 @@ class Lap(Base):
     stint: Mapped["Stint"] = relationship(back_populates="laps")
     number: Mapped[int]
     time: Mapped[float]
-    incidents: Mapped[Optional[int]]
-    start_position: Mapped[Optional[int]]
-    end_position: Mapped[Optional[int]]
-    pit: Mapped[Optional[bool]]
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
     updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
 
