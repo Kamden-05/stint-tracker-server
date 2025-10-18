@@ -9,3 +9,4 @@ app/services/__pycache__
 .env.test
 app/repositories/__pycache__
 keys.json
+app\schemas\__pycache__
