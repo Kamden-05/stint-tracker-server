@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.stint_schemas import StintCreate, StintUpdate
+from app.schemas.stint_schemas import StintCreate, StintUpdate, StintRead
 
 from app.database.db import get_db
 from app.models.session_model import Session as RaceSession
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get("/{stint_id}")
+@router.get("/{stint_id}", response_model=StintRead)
 def get_stint(session_id: int, stint_id: int, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
     if stint is None:
@@ -25,7 +25,7 @@ def get_stint(session_id: int, stint_id: int, db: DbSession):
 
     return stint
 
-@router.get('/')
+@router.get('/', response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
