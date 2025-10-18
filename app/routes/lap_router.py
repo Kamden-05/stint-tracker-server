@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.schemas.lap_base import LapCreate
+from app.schemas.lap_schemas import LapCreate
 from app.database.db import get_db
 from typing import Annotated
 from sqlalchemy.orm import Session

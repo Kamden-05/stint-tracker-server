@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, computed_field
 from typing import List, Optional
-from app.schemas.lap_base import LapBase as Lap
+from app.schemas.lap_schemas import LapBase as Lap
 
 class StintBase(BaseModel):
     session_id: int

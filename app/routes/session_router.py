@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.session_base import RaceSessionCreate
+from app.schemas.session_schemas import RaceSessionCreate
 
 from app.database.db import get_db
 from app.models import Session as RaceSession
