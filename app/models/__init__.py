@@ -7,4 +7,4 @@ class Base(DeclarativeBase):
 
 from .lap_model import Lap
 from .stint_model import Stint
-from .session_model import Session
+from .session_model import RaceSession

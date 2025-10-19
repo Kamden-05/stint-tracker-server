@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.schemas.session_schemas import RaceSessionCreate, RaceSessionRead
 
 from app.database.db import get_db
-from app.models import Session as RaceSession
+from app.models import RaceSession
 from app.repositories import session_crud
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])

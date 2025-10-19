@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.schemas.stint_schemas import StintCreate, StintUpdate, StintRead
 
 from app.database.db import get_db
-from app.models.session_model import Session as RaceSession
+from app.models.session_model import RaceSession as RaceSession
 from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
@@ -25,17 +25,19 @@ def get_stint(session_id: int, stint_id: int, db: DbSession):
 
     return stint
 
-@router.get('/', response_model=list[StintRead])
+
+@router.get("/", response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
     if session is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Session with {session_id} not found'
+            detail=f"Session with {session_id} not found",
         )
-    
+
     return session.stints
+
 
 @router.post("/")
 def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):

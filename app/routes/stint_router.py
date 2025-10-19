@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.schemas.stint_schemas import StintCreate, StintUpdate
 
 from app.database.db import get_db
-from app.models.session_model import Session as RaceSession
+from app.models.session_model import RaceSession as RaceSession
 from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
@@ -13,10 +13,12 @@ router = APIRouter(prefix="/stints", tags=["stints"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
-@router.get('/')
+
+@router.get("/")
 def get_stints(db: DbSession):
     stints = stint_crud.get_many(db)
     return stints
+
 
 @router.put("/{stint_id}")
 def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
