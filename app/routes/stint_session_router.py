@@ -9,7 +9,7 @@ from app.models.session_model import Session as Session
 from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
-router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["session_stints"])
+router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints_for_session"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 

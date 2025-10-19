@@ -25,6 +25,6 @@ def create_lap(stint_id: int, lap_create: LapCreate, db: DbSession):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f'Lap with lap number {lap_create.lap_number} already exists'
+            detail=f'Lap with lap number {lap_create.number} already exists'
         ) from e
     return lap
