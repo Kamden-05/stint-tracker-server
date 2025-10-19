@@ -53,7 +53,7 @@ def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Stint with stint number {stint_create.stint_number} already exists",
+            detail=f"Stint with stint number {stint_create.number} already exists",
         ) from e
 
     return stint
