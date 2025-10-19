@@ -10,3 +10,4 @@ app/services/__pycache__
 app/repositories/__pycache__
 keys.json
 app/schemas/__pycache__
+.server
