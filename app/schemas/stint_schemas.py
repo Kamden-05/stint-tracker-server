@@ -13,6 +13,7 @@ class StintBase(BaseModel):
     length: Optional[float] = None
     refuel_amount: Optional[float] = None
     pit_service_duration: Optional[float] = None
+    repairs: Optional[bool] = None
     tire_change: Optional[bool] = None
 
 
