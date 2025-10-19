@@ -9,7 +9,7 @@ from . import Base
 
 if TYPE_CHECKING:
     from .lap_model import Lap
-    from .session_model import RaceSession
+    from .session_model import Session
 
 
 class Stint(Base):
@@ -20,7 +20,7 @@ class Stint(Base):
         ForeignKey("session.id", ondelete="CASCADE")
     )
     number: Mapped[int]
-    session: Mapped["RaceSession"] = relationship(back_populates="stints")
+    session: Mapped["Session"] = relationship(back_populates="stints")
     laps: Mapped[List["Lap"]] = relationship(
         back_populates="stint", order_by="Lap.number"
     )

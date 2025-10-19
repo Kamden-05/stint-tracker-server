@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.schemas.session_schemas import RaceSessionCreate, RaceSessionRead
 
 from app.database.db import get_db
-from app.models import RaceSession
+from app.models import Session
 from app.repositories import session_crud
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
@@ -33,7 +33,7 @@ def get_sessions(
 
 @router.get("/{session_id}")
 def get_session(session_id: int, db: DbSession):
-    session = session_crud.get_one(db, RaceSession.id == session_id)
+    session = session_crud.get_one(db, Session.id == session_id)
 
     if session is None:
         raise HTTPException(

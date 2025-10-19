@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from .stint_model import Stint
 
 
-class RaceSession(Base):
+class Session(Base):
     __tablename__ = "session"
 
     id: Mapped[int] = mapped_column(primary_key=True)
