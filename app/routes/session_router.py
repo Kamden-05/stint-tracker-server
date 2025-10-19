@@ -52,7 +52,7 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Session with id {session_create.session_id} already exists",
+            detail=f"Session with id {session_create.id} already exists",
         ) from e
 
     return race_session
