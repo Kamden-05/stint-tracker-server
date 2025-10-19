@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import TIMESTAMP, Date, Time, String
@@ -15,8 +15,7 @@ class Session(Base):
     __tablename__ = "session"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    session_date: Mapped[datetime] = mapped_column(Date)
-    sim_date: Mapped[datetime] = mapped_column(Date)
+    session_date: Mapped[date] = mapped_column(Date, default=date.today)
     sim_time: Mapped[datetime] = mapped_column(Time)
     stints: Mapped[List["Stint"]] = relationship(
         back_populates="session", order_by="Stint.number"
