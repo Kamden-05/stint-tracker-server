@@ -2,12 +2,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.stint_schemas import StintCreate, StintUpdate
+from app.schemas.stint_schemas import StintUpdate
 
 from app.database.db import get_db
-from app.models.session_model import Session as Session
 from app.models.stint_model import Stint
-from app.repositories import session_crud, stint_crud
+from app.repositories import stint_crud
 
 router = APIRouter(prefix="/stints", tags=["stints"])
 
