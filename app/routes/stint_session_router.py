@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.schemas.stint_schemas import StintCreate, StintRead
 
 from app.database.db import get_db
-from app.models.session_model import Session as Session
+from app.models.session_model import Session as RaceSession
 from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
@@ -14,9 +14,21 @@ router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints_for_ses
 DbSession = Annotated[Session, Depends(get_db)]
 
 
+@router.get('/current', response_model=StintRead)
+def get_latest_stint(session_id: int, db:DbSession):
+    session = session_crud.get_one(db, RaceSession.id == session_id)
+
+    if session is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Session with id {session_id} not found',
+        )
+    
+    return session.stints[-1]
+
 @router.get("/{stint_id}", response_model=StintRead)
 def get_stint(session_id: int, stint_id: int, db: DbSession):
-    stint = stint_crud.get_one(db, Stint.id == stint_id)
+    stint = stint_crud.get_one(db, Stint.id == stint_id, Stint.session_id == session_id)
     if stint is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -28,7 +40,7 @@ def get_stint(session_id: int, stint_id: int, db: DbSession):
 
 @router.get("/", response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
-    session = session_crud.get_one(db, Session.id == session_id)
+    session = session_crud.get_one(db, RaceSession.id == session_id)
 
     if session is None:
         raise HTTPException(
@@ -41,7 +53,7 @@ def get_stints_for_session(session_id: int, db: DbSession):
 
 @router.post("/")
 def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
-    session = session_crud.get_one(db, Session.id == session_id)
+    session = session_crud.get_one(db, RaceSession.id == session_id)
 
     if session is None:
         raise HTTPException(
