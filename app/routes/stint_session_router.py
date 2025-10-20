@@ -14,7 +14,7 @@ router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints_for_ses
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get('/current', response_model=StintRead)
+@router.get('/latest', response_model=StintRead)
 def get_latest_stint(session_id: int, db:DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
