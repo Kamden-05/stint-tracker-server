@@ -24,6 +24,12 @@ def get_latest_stint(session_id: int, db:DbSession):
             detail=f'Session with id {session_id} not found',
         )
     
+    if len(session.stints) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT,
+            detail=f'Session with id {session_id} has no stints'
+        )
+
     return session.stints[-1]
 
 @router.get("/{stint_id}", response_model=StintRead)
