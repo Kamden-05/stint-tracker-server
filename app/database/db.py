@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 
-from app.config import settings
 from app.logger import get_logger
 from app.models import Base
 
