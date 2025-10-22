@@ -12,6 +12,8 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-2
     environment: production
 
     steps:
