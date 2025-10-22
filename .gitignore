@@ -12,4 +12,4 @@ keys.json
 app/schemas/__pycache__
 .server
 deploy_package
-iracing_lambda.zip
+lambda.zip
