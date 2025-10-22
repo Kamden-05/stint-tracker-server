@@ -1,21 +1,15 @@
 from contextlib import contextmanager
 
 from sqlalchemy import create_engine
-from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 from app.logger import get_logger
 from app.models import Base
 
+import os
+
 logger = get_logger(__name__)
 
-url = URL.create(
-    drivername="postgresql",
-    username="postgres",
-    host="localhost",
-    port="5432",
-    password="portland25",
-    database="stint_local",
-)
+url = os.environ["DATABASE_URL"]
 
 try:
     engine = create_engine(url)
