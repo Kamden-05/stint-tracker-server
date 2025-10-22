@@ -44,7 +44,7 @@ def get_stint(session_id: int, stint_id: int, db: DbSession):
     return stint
 
 
-@router.get("/", response_model=list[StintRead])
+@router.get("", response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
@@ -57,7 +57,7 @@ def get_stints_for_session(session_id: int, db: DbSession):
     return session.stints
 
 
-@router.post("/")
+@router.post("")
 def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 

@@ -4,10 +4,10 @@ app/database/__pycache__
 app/models/__pycache__
 app/routes/__pycache__
 app/services/__pycache__
-.env.local
-.env.dev
-.env.test
+.env
 app/repositories/__pycache__
 keys.json
 app/schemas/__pycache__
 .server
+lambda.zip
+deploy_package

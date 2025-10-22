@@ -13,7 +13,7 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get("/", response_model=list[RaceSessionRead])
+@router.get("", response_model=list[RaceSessionRead])
 def get_sessions(
     db: DbSession,
     session_date: Optional[str] = None,
@@ -44,7 +44,7 @@ def get_session(session_id: int, db: DbSession):
     return session
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_session(session_create: RaceSessionCreate, db: DbSession):
 
     try:

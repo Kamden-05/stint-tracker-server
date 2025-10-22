@@ -3,20 +3,18 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
-
-from app.config import settings
 from app.logger import get_logger
 from app.models import Base
 
 logger = get_logger(__name__)
 
 url = URL.create(
-    drivername=settings.POSTGRES_DRIVER_NAME,
-    username=settings.POSTGRES_USERNAME,
-    host=settings.POSTGRES_HOST,
-    port=settings.POSTGRES_PORT,
-    password=settings.POSTGRES_PASSWORD,
-    database=settings.POSTGRES_DB,
+    drivername="postgresql",
+    username="postgres",
+    host="localhost",
+    port="5432",
+    password="portland25",
+    database="stint_local",
 )
 
 try:

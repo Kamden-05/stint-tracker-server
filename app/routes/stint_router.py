@@ -13,7 +13,7 @@ router = APIRouter(prefix="/stints", tags=["stints"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get("/")
+@router.get("")
 def get_stints(db: DbSession):
     stints = stint_crud.get_many(db)
     return stints

@@ -10,7 +10,7 @@ router = APIRouter(prefix='/stints/{stint_id}/laps', tags=['laps'])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
-@router.post("/")
+@router.post("")
 def create_lap(stint_id: int, lap_create: LapCreate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
