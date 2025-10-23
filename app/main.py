@@ -16,4 +16,8 @@ app.include_router(lap_router.router)
 def root():
     return {"message": "PDR Software Solutions Stint Track Server"}
 
+@app.get('/health')
+def get_health():
+    return {"status: ok"}
+
 handler = Mangum(app, lifespan='off')
