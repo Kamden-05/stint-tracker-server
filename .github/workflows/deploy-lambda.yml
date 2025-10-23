@@ -42,7 +42,7 @@ jobs:
       with:
         function-name: stint-tracker-api
         code-artifacts-dir: ./deploy_package
-        handler: main.handler
+        handler: app.main.handler
         runtime: python3.13
         # Add any additional inputs this action supports
         
