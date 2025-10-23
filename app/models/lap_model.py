@@ -5,10 +5,10 @@ from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy import func, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from . import Base
+from app.models import Base
 
 if TYPE_CHECKING:
-    from .stint_model import Stint
+    from app.models.stint_model import Stint
 
 
 class Lap(Base):

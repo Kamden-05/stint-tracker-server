@@ -5,10 +5,10 @@ from sqlalchemy import TIMESTAMP, Date, Time, String
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from . import Base
+from app.models import Base
 
 if TYPE_CHECKING:
-    from .stint_model import Stint
+    from app.models.stint_model import Stint
 
 
 class Session(Base):

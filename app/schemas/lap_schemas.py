@@ -1,5 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
+from pydantic import BaseModel
 
 class LapBase(BaseModel):
     number: int

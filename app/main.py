@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from mangum import Mangum
 
-from .routes import (lap_router, session_router, stint_router,
+from app.routes import (lap_router, session_router, stint_router,
                      stint_session_router)
 
 app = FastAPI()

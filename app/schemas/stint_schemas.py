@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel
 from typing import List, Optional
 from app.schemas.lap_schemas import LapBase as Lap
 

@@ -5,6 +5,6 @@ class Base(DeclarativeBase):
     pass
 
 
-from .lap_model import Lap
-from .stint_model import Stint
-from .session_model import Session
+from app.models.lap_model import Lap
+from app.models.stint_model import Stint
+from app.models.session_model import Session
