@@ -10,6 +10,5 @@ keys.json
 app/schemas/__pycache__
 .server
 lambda.zip
-deploy_package
 layer.zip
 python/
