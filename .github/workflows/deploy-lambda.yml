@@ -26,17 +26,16 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
         aws-region: ${{ env.AWS_REGION }}
         # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions OIDC
-        
-    - name: Zip app folder
+  
+    - name: Clean app folder
       run: |
-        cd app
-        zip -r ../deploy_package.zip . -x "__pycache__/*"
+        find app -type d -name "__pycache__" -exec rm -rf {} +
 
     - name: Deploy Lambda Function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
         function-name: stint-tracker-api
-        code-artifacts-dir: ./deploy_package.zip
+        code-artifacts-dir: ./app
         handler: main.handler
         runtime: python3.13
         # Add any additional inputs this action supports
