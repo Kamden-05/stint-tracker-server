@@ -30,12 +30,22 @@ jobs:
     - name: Clean app folder
       run: |
         find app -type d -name "__pycache__" -exec rm -rf {} +
-
+        
+    - name: Prepare deployment package
+      run: |
+        rm -rf deploy_package deploy.zip || true
+        mkdir deploy_package
+        cp -r app deploy_package/
+        
     - name: Deploy Lambda Function
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
         function-name: stint-tracker-api
-        code-artifacts-dir: ./app
+        code-artifacts-dir: ./deploy_package
         handler: main.handler
         runtime: python3.13
         # Add any additional inputs this action supports
+        
+    - name: Clean up deployment package
+      run: |
+        rm -rf deploy_package
