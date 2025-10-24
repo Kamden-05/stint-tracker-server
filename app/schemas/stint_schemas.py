@@ -10,6 +10,7 @@ class StintBase(BaseModel):
     start_fuel: float
     end_position: Optional[int] = None
     end_fuel: Optional[float] = None
+    incidents: Optional[int] = None
     length: Optional[float] = None
     refuel_amount: Optional[float] = None
     pit_service_duration: Optional[float] = None
