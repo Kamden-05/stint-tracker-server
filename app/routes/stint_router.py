@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.stint_schemas import StintRead, StintCreate, StintUpdate
+from app.schemas.stint_schemas import StintRead, StintUpdate
 
 from app.database.db import get_db
 from app.models.stint_model import Stint
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/stints", tags=["stints"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get("", response_model=[StintRead])
+@router.get("", response_model=list[StintRead])
 def get_stints(db: DbSession):
     stints = stint_crud.get_many(db)
     return stints
