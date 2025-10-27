@@ -18,7 +18,6 @@ class Stint(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-
     session_id: Mapped[int] = mapped_column(
         ForeignKey("session.id", ondelete="CASCADE")
     )
@@ -26,8 +25,7 @@ class Stint(Base):
     laps: Mapped[List["Lap"]] = relationship(
         back_populates="stint", order_by="Lap.number"
     )
-    pit_stop: Mapped['PitStop'] = relationship(back_populates='stint', uselist=False)
-
+    pit_stop: Mapped["PitStop"] = relationship(back_populates="stint", uselist=False)
 
     driver_name: Mapped[str] = mapped_column(String)
     number: Mapped[int]
@@ -40,6 +38,7 @@ class Stint(Base):
     end_fuel: Mapped[Optional[float]]
     end_incidents: Mapped[Optional[int]]
 
+    is_complete: Mapped[bool] = mapped_column(default=False)
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
