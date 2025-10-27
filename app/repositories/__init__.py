@@ -5,5 +5,6 @@ from app.repositories.lap_crud import lap_crud
 __all__ = [
     'session_crud',
     'stint_crud',
-    'lap_crud'
+    'lap_crud',
+    'pit_crud',
 ]
