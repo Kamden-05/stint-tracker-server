@@ -1,14 +1,20 @@
 from fastapi import FastAPI
 from mangum import Mangum
 
-from app.routes import (lap_router, session_router, stint_router,
-                     stint_session_router)
+from app.routes import (
+    lap_router,
+    session_router,
+    stint_router,
+    stint_session_router,
+    pit_router,
+)
 
 app = FastAPI()
 
 app.include_router(session_router.router)
 app.include_router(stint_session_router.router)
 app.include_router(stint_router.router)
+app.include_router(pit_router)
 app.include_router(lap_router.router)
 
 
@@ -16,8 +22,10 @@ app.include_router(lap_router.router)
 def root():
     return {"message": "PDR Software Solutions Stint Track Server"}
 
-@app.get('/health')
+
+@app.get("/health")
 def get_health():
     return {"status: ok"}
 
-handler = Mangum(app, lifespan='off')
+
+handler = Mangum(app, lifespan="off")
