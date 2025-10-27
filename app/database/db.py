@@ -5,10 +5,12 @@ from sqlalchemy.orm import sessionmaker
 from app.logger import get_logger
 from app.models import Base
 
+from dotenv import load_dotenv
 import os
 
 logger = get_logger(__name__)
 
+load_dotenv()
 url = os.environ["DATABASE_URL"]
 
 try:
