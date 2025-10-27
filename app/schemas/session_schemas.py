@@ -11,8 +11,6 @@ class RaceSessionBase(BaseModel):
 
 
 class RaceSessionRead(RaceSessionBase):
-    id: int
-
     class Config:
         from_attributes = True
 
