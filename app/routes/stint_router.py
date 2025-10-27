@@ -13,17 +13,13 @@ router = APIRouter(prefix="/stints", tags=["stints"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get(
-    "",
-    response_model=[StintRead],
-    response_model_exclude={"end_time", "end_position", "end_fuel", "end_incidents"},
-)
+@router.get("", response_model=[StintRead])
 def get_stints(db: DbSession):
     stints = stint_crud.get_many(db)
     return stints
 
 
-@router.put("/{stint_id}")
+@router.put("/{stint_id}", response_model=StintRead)
 def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 

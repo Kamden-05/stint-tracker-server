@@ -13,7 +13,7 @@ class StintBase(BaseModel):
     start_fuel: float
 
 
-class StintRead(StintBase):
+class StintReadRaw(StintBase):
     id: int
     session_id: int
     laps: List[Lap] = []
@@ -34,7 +34,7 @@ class StintRead(StintBase):
             end += 86400
 
         return end - self.start_time
-    
+
     @computed_field
     def incidents(self) -> Optional[int]:
         if self.end_incidents is None:
@@ -44,6 +44,13 @@ class StintRead(StintBase):
 
     class Config:
         from_attributes = True
+
+class StintRead(StintReadRaw):
+    class Config:
+        fields = {
+            "end_time": {"exclude": True},
+            "end_incidents": {"exclude": True},
+        }
 
 
 class StintCreate(StintBase):
@@ -55,4 +62,4 @@ class StintUpdate(BaseModel):
     end_position: Optional[int] = None
     end_fuel: Optional[float] = None
     end_incidents: Optional[float] = None
-    is_complete: Optional[bool] = False
+    is_complete: bool = False

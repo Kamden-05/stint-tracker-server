@@ -14,27 +14,30 @@ router = APIRouter(prefix="/sessions/{session_id}/stints", tags=["stints_for_ses
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get('/latest', response_model=StintRead)
-def get_latest_stint(session_id: int, db:DbSession):
+@router.get("/latest", response_model=StintRead)
+def get_latest_stint(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
     if session is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Session with id {session_id} not found',
+            detail=f"Session with id {session_id} not found",
         )
-    
+
     if len(session.stints) == 0:
         raise HTTPException(
             status_code=status.HTTP_204_NO_CONTENT,
-            detail=f'Session with id {session_id} has no stints'
+            detail=f"Session with id {session_id} has no stints",
         )
 
     return session.stints[-1]
 
+
 @router.get("/number/{stint_number}", response_model=StintRead)
 def get_stint_by_number(session_id: int, stint_number: int, db: DbSession):
-    stint = stint_crud.get_one(db, Stint.number == stint_number, Stint.session_id == session_id)
+    stint = stint_crud.get_one(
+        db, Stint.number == stint_number, Stint.session_id == session_id
+    )
     if stint is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -42,6 +45,7 @@ def get_stint_by_number(session_id: int, stint_number: int, db: DbSession):
         )
 
     return stint
+
 
 @router.get("/{stint_id}", response_model=StintRead)
 def get_stint(session_id: int, stint_id: int, db: DbSession):
@@ -53,6 +57,7 @@ def get_stint(session_id: int, stint_id: int, db: DbSession):
         )
 
     return stint
+
 
 @router.get("", response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
