@@ -13,15 +13,15 @@ class StintBase(BaseModel):
     start_fuel: float
 
 
-class StintReadRaw(StintBase):
+class StintRead(StintBase):
     id: int
     session_id: int
     laps: List[Lap] = []
 
-    end_time: Optional[float] = None
+    end_time: Optional[float] = Field(default=None, exclude=True)
     end_position: Optional[float] = None
     end_fuel: Optional[float] = None
-    end_incidents: Optional[float] = None
+    end_incidents: Optional[float] = Field(default=None, exclude=True)
 
     @computed_field
     def duration(self) -> Optional[float]:
@@ -44,12 +44,6 @@ class StintReadRaw(StintBase):
 
     class Config:
         from_attributes = True
-
-
-class StintRead(StintReadRaw):
-    end_time: Optional[float] = Field(default=None, exclude=True)
-    end_incidents: Optional[int] = Field(default=None, exclude=True)
-
 
 class StintCreate(StintBase):
     session_id: int
