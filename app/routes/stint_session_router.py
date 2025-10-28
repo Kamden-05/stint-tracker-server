@@ -46,19 +46,6 @@ def get_stint_by_number(session_id: int, stint_number: int, db: DbSession):
 
     return stint
 
-
-@router.get("/{stint_id}", response_model=StintRead)
-def get_stint(session_id: int, stint_id: int, db: DbSession):
-    stint = stint_crud.get_one(db, Stint.id == stint_id, Stint.session_id == session_id)
-    if stint is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Stint with id {stint_id} not found",
-        )
-
-    return stint
-
-
 @router.get("", response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)

@@ -19,6 +19,18 @@ def get_stints(db: DbSession):
     return stints
 
 
+@router.get("/{stint_id}", response_model=StintRead)
+def get_stint(stint_id: int, db: DbSession):
+    stint = stint_crud.get_one(db, Stint.id == stint_id)
+    if stint is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Stint with id {stint_id} not found",
+        )
+
+    return stint
+
+
 @router.put("/{stint_id}", response_model=StintRead)
 def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
