@@ -14,7 +14,7 @@ app = FastAPI()
 app.include_router(session_router.router)
 app.include_router(stint_session_router.router)
 app.include_router(stint_router.router)
-app.include_router(pit_router)
+app.include_router(pit_router.router)
 app.include_router(lap_router.router)
 
 

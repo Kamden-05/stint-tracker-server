@@ -1,4 +1,4 @@
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, computed_field, Field
 from typing import List, Optional
 from app.schemas.lap_schemas import LapBase as Lap
 
@@ -45,12 +45,10 @@ class StintReadRaw(StintBase):
     class Config:
         from_attributes = True
 
+
 class StintRead(StintReadRaw):
-    class Config:
-        fields = {
-            "end_time": {"exclude": True},
-            "end_incidents": {"exclude": True},
-        }
+    end_time: Optional[float] = Field(default=None, exclude=True)
+    end_incidents: Optional[int] = Field(default=None, exclude=True)
 
 
 class StintCreate(StintBase):
