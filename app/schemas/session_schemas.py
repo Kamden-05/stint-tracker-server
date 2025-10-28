@@ -3,6 +3,7 @@ import datetime
 
 
 class RaceSessionBase(BaseModel):
+    id: int
     track: str
     car_class: str
     car: str
@@ -16,4 +17,4 @@ class RaceSessionRead(RaceSessionBase):
 
 
 class RaceSessionCreate(RaceSessionBase):
-    id: int
+    pass
