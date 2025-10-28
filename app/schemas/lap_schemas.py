@@ -11,6 +11,7 @@ class LapCreate(LapBase):
 
 
 class LapRead(LapBase):
+    id: int
 
     class Config:
         from_attributes = True
