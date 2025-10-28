@@ -14,7 +14,7 @@ DbSession = Annotated[Session, Depends(get_db)]
 
 
 @router.get("", response_model=list[RaceSessionRead])
-def get_sessions(
+def list_sessions(
     db: DbSession,
     session_date: Optional[str] = None,
     track: Optional[str] = None,
