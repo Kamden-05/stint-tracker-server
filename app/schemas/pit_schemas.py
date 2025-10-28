@@ -1,4 +1,4 @@
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, Field, computed_field
 
 
 class PitBase(BaseModel):
@@ -14,6 +14,11 @@ class PitBase(BaseModel):
 
 class PitRead(PitBase):
     id: int
+
+    road_enter_time: float = Field(exclude=True)
+    service_start_time: float = Field(exclude=True)
+    service_end_time: float = Field(exclude=True)
+    road_exit_time: float = Field(exclude=True)
 
     @computed_field
     def service_time(self) -> float:
