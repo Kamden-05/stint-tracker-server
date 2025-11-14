@@ -16,7 +16,7 @@ class Session(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     session_date: Mapped[date] = mapped_column(Date, default=date.today)
-    sim_time: Mapped[datetime] = mapped_column(Time)
+    race_duration: Mapped[int]
     stints: Mapped[List["Stint"]] = relationship(
         back_populates="session", order_by="Stint.number"
     )

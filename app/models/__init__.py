@@ -8,3 +8,4 @@ class Base(DeclarativeBase):
 from app.models.lap_model import Lap
 from app.models.stint_model import Stint
 from app.models.session_model import Session
+from app.models.pitstop_model import PitStop

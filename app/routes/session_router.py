@@ -14,7 +14,7 @@ DbSession = Annotated[Session, Depends(get_db)]
 
 
 @router.get("", response_model=list[RaceSessionRead])
-def get_sessions(
+def list_sessions(
     db: DbSession,
     session_date: Optional[str] = None,
     track: Optional[str] = None,
@@ -31,7 +31,7 @@ def get_sessions(
     return sessions
 
 
-@router.get("/{session_id}")
+@router.get("/{session_id}", response_model=RaceSessionRead)
 def get_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, Session.id == session_id)
 
@@ -44,7 +44,7 @@ def get_session(session_id: int, db: DbSession):
     return session
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=RaceSessionRead)
 def create_session(session_create: RaceSessionCreate, db: DbSession):
 
     try:

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.schemas.lap_schemas import LapCreate
+from app.schemas.lap_schemas import LapRead, LapCreate
 from app.database.db import get_db
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -10,7 +10,7 @@ router = APIRouter(prefix='/stints/{stint_id}/laps', tags=['laps'])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
-@router.post("")
+@router.post("", response_model=LapRead)
 def create_lap(stint_id: int, lap_create: LapCreate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
