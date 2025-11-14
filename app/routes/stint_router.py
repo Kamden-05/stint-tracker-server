@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.stint_schemas import StintCreate, StintRead
+from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
 
 from app.database.db import get_db
-from app.models.session_model import Session as RaceSession
+from app.models.session_model import RaceSession
 from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
@@ -13,7 +13,7 @@ router = APIRouter(tags=["stints"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
-''' Nested Routes'''
+""" Nested Routes"""
 
 @router.get("/sessions/{session_id}/stints/latest", response_model=StintRead)
 def get_latest_stint(session_id: int, db: DbSession):
@@ -47,6 +47,7 @@ def get_stint_by_number(session_id: int, stint_number: int, db: DbSession):
 
     return stint
 
+
 @router.get("/sessions/{session_id}/stints", response_model=list[StintRead])
 def get_stints_for_session(session_id: int, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
@@ -60,7 +61,11 @@ def get_stints_for_session(session_id: int, db: DbSession):
     return session.stints
 
 
-@router.post("/sessions/{session_id}/stints", response_model=StintRead, response_model_exclude_none=True)
+@router.post(
+    "/sessions/{session_id}/stints",
+    response_model=StintRead,
+    response_model_exclude_none=True,
+)
 def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
@@ -80,7 +85,7 @@ def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
     return stint
 
 
-''' Flat Routes '''
+""" Flat Routes """
 
 @router.get("/stints", response_model=list[StintRead])
 def get_stints(db: DbSession):

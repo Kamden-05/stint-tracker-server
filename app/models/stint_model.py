@@ -9,7 +9,7 @@ from app.models import Base
 
 if TYPE_CHECKING:
     from app.models.lap_model import Lap
-    from app.models.session_model import Session
+    from app.models.session_model import RaceSession
     from app.models.pitstop_model import PitStop
 
 
@@ -21,7 +21,7 @@ class Stint(Base):
     session_id: Mapped[int] = mapped_column(
         ForeignKey("session.id", ondelete="CASCADE")
     )
-    session: Mapped["Session"] = relationship(back_populates="stints")
+    session: Mapped["RaceSession"] = relationship(back_populates="stints")
     laps: Mapped[List["Lap"]] = relationship(
         back_populates="stint", order_by="Lap.number"
     )

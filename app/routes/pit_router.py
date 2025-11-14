@@ -28,8 +28,8 @@ def get_pit_for_stint(stint_id: int, db: DbSession):
     return pit
 
 @router.post("/stints/{stint_id}/pits", response_model=PitRead)
-def create_pit(sitnt_id: int, pit_create: PitCreate, db: DbSession):
-    stint = stint_crud.get_one(db, Stint.id == sitnt_id)
+def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
+    stint = stint_crud.get_one(db, Stint.id == stint_id)
 
     if stint is None:
         raise HTTPException(
