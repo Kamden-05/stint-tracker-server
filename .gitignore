@@ -13,3 +13,4 @@ lambda.zip
 layer.zip
 python/
 .github
+.pylintrc
