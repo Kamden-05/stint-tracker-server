@@ -105,7 +105,7 @@ def get_stint(stint_id: int, db: DbSession):
     return stint
 
 
-@router.put("/stints/{stint_id}", response_model=StintRead)
+@router.patch("/stints/{stint_id}", response_model=StintRead)
 def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
