@@ -5,11 +5,9 @@ class PitBase(BaseModel):
     stint_id: int
     road_enter_time: float
     service_start_time: float
-    refuel_amount: float
+    fuel_start_amount: float
     repairs: bool
     tire_change: bool
-    service_end_time: float
-    road_exit_time: float
 
 
 class PitRead(PitBase):
@@ -44,3 +42,9 @@ class PitRead(PitBase):
 
 class PitCreate(PitBase):
     pass
+
+
+class PitUpdate(BaseModel):
+    service_end_time: float
+    fuel_end_amount: float
+    road_exit_time: float
