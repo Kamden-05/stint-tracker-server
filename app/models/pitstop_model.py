@@ -24,11 +24,11 @@ class PitStop(Base):
     road_enter_time: Mapped[float]
     service_start_time: Mapped[float]
     fuel_start_amount: Mapped[float]
-    fuel_end_amount: Mapped[float]
+    fuel_end_amount: Mapped[Optional[float]]
     repairs: Mapped[bool]
     tire_change: Mapped[bool]
-    service_end_time: Mapped[float]
-    road_exit_time: Mapped[float]
+    service_end_time: Mapped[Optional[float]]
+    road_exit_time: Mapped[Optional[float]]
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()

@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field, computed_field
 
 
@@ -15,26 +16,32 @@ class PitRead(PitBase):
 
     road_enter_time: float = Field(exclude=True)
     service_start_time: float = Field(exclude=True)
-    service_end_time: float = Field(exclude=True)
-    road_exit_time: float = Field(exclude=True)
+    service_end_time: Optional[float] = Field(exclude=True, default=None)
+    road_exit_time: Optional[float] = Field(exclude=True, default=None)
 
     @computed_field
     def service_time(self) -> float:
-        end = self.service_end_time
+        if self.service_end_time:
+            end = self.service_end_time
 
-        if end < self.service_start_time:
-            end += 86400
+            if end < self.service_start_time:
+                end += 86400
 
-        return end - self.service_start_time
+            return end - self.service_start_time
+        else:
+            return -1.0
 
     @computed_field
     def pit_time(self) -> float:
-        end = self.road_exit_time
+        if self.road_exit_time:
+            end = self.road_exit_time
 
-        if end < self.road_enter_time:
-            end += 86400
+            if end < self.road_enter_time:
+                end += 86400
 
-        return end - self.road_enter_time
+            return end - self.road_enter_time
+        else:
+            return -1.0
 
     class Config:
         from_attributes = True
