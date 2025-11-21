@@ -85,8 +85,6 @@ def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
     return stint
 
 
-""" Flat Routes """
-
 @router.get("/stints", response_model=list[StintRead])
 def get_stints(db: DbSession):
     stints = stint_crud.get_many(db)

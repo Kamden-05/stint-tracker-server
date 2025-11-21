@@ -47,9 +47,6 @@ def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
 
     return pit
 
-
-''' Flat Routes '''
-
 @router.get("/pits", response_model=list[PitRead])
 def get_pitstops(db: DbSession):
     pits = pit_crud.get_many(db)
