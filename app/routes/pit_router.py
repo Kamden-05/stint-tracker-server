@@ -9,13 +9,13 @@ from app.models.stint_model import Stint
 from app.models.pitstop_model import PitStop
 from app.repositories import pit_crud, stint_crud
 
-router = APIRouter(tags=["pits"])
+router = APIRouter(tags=["pitstops"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
 ''' Nested Routes '''
 
-@router.get("/stints/{stint_id}/pits", response_model=PitRead)
+@router.get("/stints/{stint_id}/pitstops", response_model=PitRead)
 def get_pit_for_stint(stint_id: int, db: DbSession):
     pit = pit_crud.get_one(db, PitStop.stint_id == stint_id)
 
@@ -27,7 +27,7 @@ def get_pit_for_stint(stint_id: int, db: DbSession):
     
     return pit
 
-@router.post("/stints/{stint_id}/pits", response_model=PitRead)
+@router.post("/stints/{stint_id}/pitstops", response_model=PitRead)
 def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
@@ -68,16 +68,16 @@ def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
     return pitstop
 
 
-@router.get("/pits", response_model=list[PitRead])
+@router.get("/pitstops", response_model=list[PitRead])
 def get_pitstops(db: DbSession):
     pits = pit_crud.get_many(db)
     return pits
 
-@router.get("/pits", response_model=PitRead)
+@router.get("/pitstops", response_model=PitRead)
 def get_pitstops_for_session(session_id: int, db: DbSession):
     pass
 
-@router.get("/pits/{pit_id}", response_model=PitRead)
+@router.get("/pitstops/{pit_id}", response_model=PitRead)
 def get_pitstop(pit_id: int, db: DbSession):
     pit = pit_crud.get_one(db, PitStop.id == pit_id)
 
