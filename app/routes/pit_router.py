@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.pit_schemas import PitRead, PitCreate
+from app.schemas.pit_schemas import PitRead, PitCreate, PitUpdate
 
 from app.database.db import get_db
 from app.models.stint_model import Stint
@@ -46,6 +46,27 @@ def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
         ) from e
 
     return pit
+
+@router.patch("/pitstops/{pitstop_id}", response_model=PitRead)
+def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
+    pitstop = pit_crud.get_one(db, PitStop.id == pitstop_id)
+
+    if pitstop is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Pitstop with id {pitstop_id} not found"
+        )
+    
+    try:
+        pitstop = pit_crud.update(db, pitstop, pit_update)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Couldn't update pitstop with id {pitstop_id}. Error: {str(e)}",
+        ) from e
+    
+    return pitstop
+
 
 @router.get("/pits", response_model=list[PitRead])
 def get_pitstops(db: DbSession):
