@@ -13,7 +13,8 @@ router = APIRouter(tags=["pitstops"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
-''' Nested Routes '''
+""" Nested Routes """
+
 
 @router.get("/stints/{stint_id}/pitstops", response_model=PitRead)
 def get_pit_for_stint(stint_id: int, db: DbSession):
@@ -22,10 +23,11 @@ def get_pit_for_stint(stint_id: int, db: DbSession):
     if pit is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Pit Stop with stint id {stint_id} not found'
+            detail=f"Pit Stop with stint id {stint_id} not found",
         )
-    
+
     return pit
+
 
 @router.post("/stints/{stint_id}/pitstops", response_model=PitRead)
 def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
@@ -34,9 +36,9 @@ def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
     if stint is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Stint with id {stint_id} not found'
+            detail=f"Stint with id {stint_id} not found",
         )
-    
+
     try:
         pit = pit_crud.create(db, pit_create)
     except Exception as e:
@@ -47,6 +49,7 @@ def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
 
     return pit
 
+
 @router.patch("/pitstops/{pitstop_id}", response_model=PitRead)
 def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
     pitstop = pit_crud.get_one(db, PitStop.id == pitstop_id)
@@ -54,9 +57,9 @@ def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
     if pitstop is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pitstop with id {pitstop_id} not found"
+            detail=f"Pitstop with id {pitstop_id} not found",
         )
-    
+
     try:
         pitstop = pit_crud.update(db, pitstop, pit_update)
     except Exception as e:
@@ -64,7 +67,7 @@ def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Couldn't update pitstop with id {pitstop_id}. Error: {str(e)}",
         ) from e
-    
+
     return pitstop
 
 
@@ -73,9 +76,11 @@ def get_pitstops(db: DbSession):
     pits = pit_crud.get_many(db)
     return pits
 
+
 @router.get("/pitstops", response_model=PitRead)
 def get_pitstops_for_session(session_id: int, db: DbSession):
     pass
+
 
 @router.get("/pitstops/{pit_id}", response_model=PitRead)
 def get_pitstop(pit_id: int, db: DbSession):
