@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
 
 from app.database.db import get_db
@@ -9,36 +10,53 @@ from app.models.session_model import RaceSession
 from app.models.stint_model import Stint
 from app.repositories import session_crud, stint_crud
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 router = APIRouter(tags=["stints"])
 
 DbSession = Annotated[Session, Depends(get_db)]
 
-""" Nested Routes"""
 
-@router.get("/sessions/{session_id}/stints/latest", response_model=StintRead)
-def get_latest_stint(session_id: int, db: DbSession):
+def get_session(session_id: int, db: DbSession) -> RaceSession:
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
-    if session is None:
+    if not session:
+        logger.warning("Session %s not found", session_id)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Session with id {session_id} not found",
         )
 
-    if len(session.stints) == 0:
+    return session
+
+
+RaceSessionDep = Annotated[RaceSession, Depends(get_session)]
+
+""" Nested Routes"""
+
+
+@router.get("/sessions/{session_id}/stints/latest", response_model=StintRead)
+def get_latest_stint(session: RaceSessionDep):
+
+    if not session.stints:
         raise HTTPException(
             status_code=status.HTTP_204_NO_CONTENT,
-            detail=f"Session with id {session_id} has no stints",
+            detail=f"Session with id {session.id} has no stints",
         )
 
-    return session.stints[-1]
+    latest_stint = max(session.stints, key=lambda s: s.number)
+
+    return latest_stint
 
 
 @router.get("/sessions/{session_id}/number/{stint_number}", response_model=StintRead)
-def get_stint_by_number(session_id: int, stint_number: int, db: DbSession):
+def get_stint_by_number(session: RaceSessionDep, stint_number: int, db: DbSession):
     stint = stint_crud.get_one(
-        db, Stint.number == stint_number, Stint.session_id == session_id
+        db, Stint.number == stint_number, Stint.session_id == session.id
     )
+
     if stint is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -49,16 +67,8 @@ def get_stint_by_number(session_id: int, stint_number: int, db: DbSession):
 
 
 @router.get("/sessions/{session_id}/stints", response_model=list[StintRead])
-def get_stints_for_session(session_id: int, db: DbSession):
-    session = session_crud.get_one(db, RaceSession.id == session_id)
-
-    if session is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Session with {session_id} not found",
-        )
-
-    return session.stints
+def get_stints_for_session(session: RaceSessionDep):
+    return sorted(session.stints, key=lambda s: s.number)
 
 
 @router.post(
@@ -66,17 +76,18 @@ def get_stints_for_session(session_id: int, db: DbSession):
     response_model=StintRead,
     response_model_exclude_none=True,
 )
-def create_stint(session_id: int, stint_create: StintCreate, db: DbSession):
-    session = session_crud.get_one(db, RaceSession.id == session_id)
+def create_stint(session: RaceSessionDep, stint_create: StintCreate, db: DbSession):
 
-    if session is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Session with id {session_id} not found",
-        )
     try:
         stint = stint_crud.create(db, stint_create)
-    except Exception as e:
+        logger.info("Created stint %s for session %s", stint_create.number, session.id)
+    except IntegrityError as e:
+        logger.warning(
+            "Failed to create stint %s for session %s: %s",
+            stint_create.number,
+            session.id,
+            e,
+        )
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Stint with stint number {stint_create.number} already exists",
@@ -121,7 +132,9 @@ def update_stint(stint_id: int, stint_update: StintUpdate, db: DbSession):
 
     try:
         stint = stint_crud.update(db, stint, stint_update)
+        logger.info("Updated stint %s", stint_id)
     except Exception as e:
+        logger.error("Failed to update stint %s: %s", stint_id, e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Couldn't update stint with id {stint_id}. Error: {str(e)}",

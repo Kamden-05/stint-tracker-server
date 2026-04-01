@@ -57,7 +57,7 @@ class CRUDRepository:
     def update(self, db: Session, db_obj: ModelType, obj: UpdateSchemaType) -> Base:
 
         logger.debug(
-            f"Updating record for {self.model.__name__} with data {obj.model_dump()}"
+            f"Updating record for {self.model.__name__} with data {obj.model_dump(exclude_unset=True)}"
         )
 
         data = obj.model_dump(by_alias=True, exclude_unset=True)

@@ -2,6 +2,7 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.schemas.session_schemas import RaceSessionCreate, RaceSessionRead
 
 from app.database.db import get_db
@@ -32,6 +33,15 @@ def list_sessions(
         car_class=car_class,
         car=car,
     )
+
+    logger.info(
+        "Listing sessions with filters: date=%s, track=%s, class=%s, car=%s",
+        session_date,
+        track,
+        car_class,
+        car,
+    )
+
     return sessions
 
 
@@ -53,8 +63,13 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
 
     try:
         race_session = session_crud.create(db, session_create)
-        logger.info("Creating session for id=%s date=%s", session_create.id, session_create.session_date)
-    except Exception as e:
+        logger.info(
+            "Creating session for id=%s date=%s",
+            session_create.id,
+            session_create.session_date,
+        )
+    except IntegrityError as e:
+        logger.error("Duplicate session creation failed: %s", e)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Session with id {session_create.id} already exists",

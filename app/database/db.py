@@ -2,13 +2,13 @@ from contextlib import contextmanager
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.logger import get_logger
 from app.models import Base
 
 from dotenv import load_dotenv
 import os
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 url = os.environ["TEST_DB"]
