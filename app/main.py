@@ -1,6 +1,18 @@
 from fastapi import FastAPI
 from mangum import Mangum
 
+import logging
+import sys
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] [%(name)s:%(lineno)d] %(message)s",
+    handlers=[
+        logging.FileHandler("stint_tracker.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
+
 from app.routes import (
     lap_router,
     session_router,
@@ -18,7 +30,7 @@ app.include_router(lap_router.router)
 
 @app.get("/")
 def root():
-    return {"message": "PDR Software Solutions Stint Track Server"}
+    return {"message": "PDR Sim Racing Solutions Stint Track Server"}
 
 
 @app.get("/health")

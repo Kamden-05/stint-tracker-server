@@ -8,6 +8,10 @@ from app.database.db import get_db
 from app.models import RaceSession
 from app.repositories import session_crud
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 DbSession = Annotated[Session, Depends(get_db)]
@@ -49,6 +53,7 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
 
     try:
         race_session = session_crud.create(db, session_create)
+        logger.info("Creating session for id=%s date=%s", session_create.id, session_create.session_date)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

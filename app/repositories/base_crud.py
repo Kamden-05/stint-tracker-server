@@ -4,10 +4,10 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.logger import get_logger
 from app.models import Base
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -22,7 +22,11 @@ class CRUDRepository:
 
     def get_one(self, db: Session, *args, **kwargs) -> Optional[ModelType]:
         logger.debug(f"Retrieving record for {self.model.__name__}")
-        stmt = select(self.model).where(*args).filter_by(**kwargs)
+        filters = [
+            *args,
+            *[getattr(self.model, k) == v for k, v in kwargs.items() if v is not None],
+        ]
+        stmt = select(self.model).where(*filters)
         return db.scalars(stmt).first()
 
     def get_many(
@@ -53,7 +57,7 @@ class CRUDRepository:
     def update(self, db: Session, db_obj: ModelType, obj: UpdateSchemaType) -> Base:
 
         logger.debug(
-            f"Creating record for {self.model.__name__} with data {obj.model_dump()}"
+            f"Updating record for {self.model.__name__} with data {obj.model_dump()}"
         )
 
         data = obj.model_dump(by_alias=True, exclude_unset=True)
