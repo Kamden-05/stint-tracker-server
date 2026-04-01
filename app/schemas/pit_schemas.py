@@ -7,8 +7,12 @@ class PitBase(BaseModel):
     road_enter_time: float
     service_start_time: float
     fuel_start_amount: float
-    repairs: bool
-    tire_change: bool
+    required_repair_time: float
+    optional_repair_time: float
+    left_front_tire_change: bool
+    left_rear_tire_change: bool
+    right_front_tire_change: bool
+    right_rear_tire_change: bool
 
 
 class PitRead(PitBase):
