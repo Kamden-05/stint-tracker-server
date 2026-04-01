@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 import datetime
 
 
@@ -12,8 +12,7 @@ class RaceSessionBase(BaseModel):
 
 
 class RaceSessionRead(RaceSessionBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RaceSessionCreate(RaceSessionBase):

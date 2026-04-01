@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, ConfigDict
 
 
 class PitBase(BaseModel):
@@ -60,8 +60,7 @@ class PitRead(PitBase):
 
         return end_fuel - self.fuel_start_amount
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PitCreate(PitBase):

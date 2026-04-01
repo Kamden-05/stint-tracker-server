@@ -1,4 +1,4 @@
-from pydantic import BaseModel, computed_field, Field, field_serializer
+from pydantic import BaseModel, computed_field, Field, field_serializer, ConfigDict
 from enum import Enum
 from typing import List, Optional
 from app.schemas.lap_schemas import LapBase as Lap
@@ -71,8 +71,7 @@ class StintRead(StintBase):
         else:
             return self.end_incidents - self.start_incidents
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StintCreate(StintBase):
