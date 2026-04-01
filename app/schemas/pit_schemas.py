@@ -21,27 +21,29 @@ class PitRead(PitBase):
 
     @computed_field
     def service_time(self) -> float:
-        if self.service_end_time:
-            end = self.service_end_time
+        end = self.service_end_time
 
-            if end < self.service_start_time:
-                end += 86400
-
-            return end - self.service_start_time
-        else:
+        if end is None:
             return -1.0
+
+        if end < self.service_start_time:
+            end += 86400
+
+        return end - self.service_start_time
 
     @computed_field
     def pit_time(self) -> float:
-        if self.road_exit_time:
-            end = self.road_exit_time
+        end = self.road_exit_time
 
-            if end < self.road_enter_time:
-                end += 86400
-
-            return end - self.road_enter_time
-        else:
+        if end is None:
             return -1.0
+
+        end = self.road_exit_time
+
+        if end < self.road_enter_time:
+            end += 86400
+
+        return end - self.road_enter_time
 
     class Config:
         from_attributes = True
