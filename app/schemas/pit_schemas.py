@@ -18,32 +18,43 @@ class PitRead(PitBase):
     service_start_time: float = Field(exclude=True)
     service_end_time: Optional[float] = Field(exclude=True, default=None)
     road_exit_time: Optional[float] = Field(exclude=True, default=None)
+    fuel_end_amount: Optional[float] = Field(exclude=True, default=None)
 
     @computed_field
     def service_time(self) -> float:
-        end = self.service_end_time
+        end_time = self.service_end_time
 
-        if end is None:
+        if end_time is None:
             return None
 
-        if end < self.service_start_time:
-            end += 86400
+        if end_time < self.service_start_time:
+            end_time += 86400
 
-        return end - self.service_start_time
+        return end_time - self.service_start_time
 
     @computed_field
-    def pit_time(self) -> float:
-        end = self.road_exit_time
+    def total_pit_time(self) -> float:
+        end_time = self.road_exit_time
 
-        if end is None:
+        if end_time is None:
             return None
 
-        end = self.road_exit_time
+        if end_time < self.road_enter_time:
+            end_time += 86400
 
-        if end < self.road_enter_time:
-            end += 86400
+        return end_time - self.road_enter_time
 
-        return end - self.road_enter_time
+    @computed_field
+    def refuel_amount(self) -> float:
+        end_fuel = self.fuel_end_amount
+
+        if end_fuel is None:
+            return None
+
+        if end_fuel < self.fuel_start_amount:
+            return 0.0
+
+        return end_fuel - self.fuel_start_amount
 
     class Config:
         from_attributes = True
