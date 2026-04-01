@@ -32,7 +32,7 @@ StintDep = Annotated[Stint, Depends(get_stint)]
 
 
 @router.post("", response_model=LapRead)
-def create_lap(lap_create: LapCreate, db: DbSession, stint: Stint):
+def create_lap(lap_create: LapCreate, db: DbSession, stint: StintDep):
 
     try:
         lap = lap_crud.create(db, lap_create)
