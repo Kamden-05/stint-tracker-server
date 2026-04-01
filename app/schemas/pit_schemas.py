@@ -24,7 +24,7 @@ class PitRead(PitBase):
         end = self.service_end_time
 
         if end is None:
-            return -1.0
+            return None
 
         if end < self.service_start_time:
             end += 86400
@@ -36,7 +36,7 @@ class PitRead(PitBase):
         end = self.road_exit_time
 
         if end is None:
-            return -1.0
+            return None
 
         end = self.road_exit_time
 

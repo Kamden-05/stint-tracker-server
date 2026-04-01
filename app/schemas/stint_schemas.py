@@ -25,10 +25,10 @@ class StintRead(StintBase):
 
     @computed_field
     def duration(self) -> Optional[float]:
-        if self.end_time is None:
-            return None
-
         end = self.end_time
+
+        if end is None:
+            return None
 
         if end < self.start_time:
             end += 86400
@@ -44,6 +44,7 @@ class StintRead(StintBase):
 
     class Config:
         from_attributes = True
+
 
 class StintCreate(StintBase):
     session_id: int
