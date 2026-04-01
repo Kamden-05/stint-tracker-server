@@ -37,6 +37,10 @@ class Stint(Base):
     end_position: Mapped[Optional[int]]
     end_fuel: Mapped[Optional[float]]
     end_incidents: Mapped[Optional[int]]
+    track_temp: Mapped[float]
+    track_wetness: Mapped[int]
+    sky_cover: Mapped[int]
+    precipitation: Mapped[float]
 
     is_complete: Mapped[bool] = mapped_column(default=False)
 
