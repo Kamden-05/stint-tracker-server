@@ -8,7 +8,6 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] [%(name)s:%(lineno)d] %(message)s",
     handlers=[
-        logging.FileHandler("stint_tracker.log"),
         logging.StreamHandler(sys.stdout),
     ],
 )
