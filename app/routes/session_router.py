@@ -3,11 +3,15 @@ from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from app.schemas.session_schemas import RaceSessionCreate, RaceSessionRead
+from app.schemas.session_schemas import (
+    RaceSessionCreate,
+    RaceSessionRead,
+    SessionCarRead,
+)
 
 from app.database.db import get_db
-from app.models import RaceSession
-from app.repositories import session_crud
+from app.models import RaceSession, SessionCar
+from app.repositories import session_crud, session_car_crud
 
 import logging
 
@@ -23,23 +27,17 @@ def list_sessions(
     db: DbSession,
     session_date: Optional[str] = None,
     track: Optional[str] = None,
-    car_class: Optional[str] = None,
-    car: Optional[str] = None,
 ):
     sessions = session_crud.get_many(
         db,
         session_date=session_date,
         track=track,
-        car_class=car_class,
-        car=car,
     )
 
     logger.info(
-        "Listing sessions with filters: date=%s, track=%s, class=%s, car=%s",
+        "Listing sessions with filters: date=%s, track=%s",
         session_date,
         track,
-        car_class,
-        car,
     )
 
     return sessions
@@ -58,11 +56,21 @@ def get_session(session_id: int, db: DbSession):
     return session
 
 
-@router.post("", response_model=RaceSessionRead)
+@router.post("", response_model=SessionCarRead)
 def create_session(session_create: RaceSessionCreate, db: DbSession):
+    session_data = RaceSessionCreate.model_dump(
+        exclude={"car_id", "car_name", "car_class"}
+    )
+
+    car_data = {
+        "session_id": session_create.id,
+        "car_id": session_create.car_id,
+        "car_name": session_create.car_name,
+        "car_class": session_create.car_class,
+    }
 
     try:
-        race_session = session_crud.create(db, session_create)
+        race_session = session_crud.create(db, RaceSession(**session_data))
         logger.info(
             "Creating session for id=%s date=%s",
             session_create.id,
@@ -70,9 +78,20 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
         )
     except IntegrityError as e:
         logger.error("Duplicate session creation failed: %s", e)
+
+    try:
+        session_car = session_car_crud.create(db, SessionCar(**car_data))
+        logger.info(
+            "Creating car for session with id=%s date=%s",
+            session_create.car_id,
+            session_create.car_name,
+            session_create.car_class,
+        )
+    except IntegrityError as e:
+        logger.error("Duplciate car creation failed: %s", e)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Session with id {session_create.id} already exists",
-        ) from e
+            detail=f"Car with id {session_create.car_id} already exists for session with id {session_create.id}",
+        )
 
-    return race_session
+    return session_car
