@@ -23,9 +23,7 @@ class TrackWetness(Enum):
 
 
 class StintBase(BaseModel):
-    number: int
     driver_name: str
-
     start_time: float
     start_position: int
     start_incidents: int
@@ -39,6 +37,7 @@ class StintBase(BaseModel):
 class StintRead(StintBase):
     id: int
     session_id: int
+    car_id: int
     laps: List[Lap] = []
 
     track_wetness: TrackWetness
@@ -76,6 +75,7 @@ class StintRead(StintBase):
 
 class StintCreate(StintBase):
     session_id: int
+    car_id: int
 
 
 class StintUpdate(BaseModel):

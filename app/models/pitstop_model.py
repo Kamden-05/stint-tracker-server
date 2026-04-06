@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import TIMESTAMP, ForeignKey
+from sqlalchemy import TIMESTAMP, ForeignKey, ForeignKeyConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,9 +16,15 @@ class PitStop(Base):
     __tablename__ = "pit_stop"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    session_car_id: Mapped[int] = mapped_column(
-        ForeignKey("session_car.id", ondelete="CASCADE")
+    session_id: Mapped[int]
+    car_id: Mapped[int]
+
+    __table_args__ = ForeignKeyConstraint(
+        ["session_id", "car_id"],
+        ["session_car.session_id", "session_car.car_id"],
+        ondelete="CASCADE",
     )
+    
     stint_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("stint.id", ondelete="SET NULL"), nullable=True, unique=True
     )

@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import TIMESTAMP, Date, String, ForeignKey, UniqueConstraint
+from sqlalchemy import TIMESTAMP, Date, String, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -35,7 +35,6 @@ class RaceSession(Base):
 class SessionCar(Base):
     __tablename__ = "session_car"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[int] = mapped_column(
         ForeignKey("session.id", ondelete="CASCADE")
     )
@@ -62,6 +61,4 @@ class SessionCar(Base):
         TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    __table_args__ = UniqueConstraint(
-        "session_id", "car_id", name="unqiue_car_per_session"
-    )
+    __table_args__ = PrimaryKeyConstraint("session_id", "car_id", name="session_car_pkyes")

@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field, computed_field, ConfigDict
 
 
 class PitBase(BaseModel):
-    stint_id: int
     road_enter_time: float
     service_start_time: float
     fuel_start_amount: float
@@ -18,6 +17,9 @@ class PitBase(BaseModel):
 class PitRead(PitBase):
     id: int
 
+    stint_id: int
+    car_id: int
+    session_id: int
     road_enter_time: float = Field(exclude=True)
     service_start_time: float = Field(exclude=True)
     service_end_time: Optional[float] = Field(exclude=True, default=None)
@@ -64,7 +66,8 @@ class PitRead(PitBase):
 
 
 class PitCreate(PitBase):
-    pass
+    session_id: int
+    car_id: int
 
 
 class PitUpdate(BaseModel):
