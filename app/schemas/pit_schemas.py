@@ -16,8 +16,7 @@ class PitBase(BaseModel):
 
 class PitRead(PitBase):
     id: int
-
-    stint_id: int
+    
     car_id: int
     session_id: int
     road_enter_time: float = Field(exclude=True)

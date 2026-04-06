@@ -31,7 +31,6 @@ class Stint(Base):
     laps: Mapped[List["Lap"]] = relationship(
         back_populates="stint", order_by="Lap.start_time"
     )
-    pit_stop: Mapped["PitStop"] = relationship(back_populates="stint", uselist=False)
 
     driver_name: Mapped[str] = mapped_column(String)
     start_time: Mapped[float]

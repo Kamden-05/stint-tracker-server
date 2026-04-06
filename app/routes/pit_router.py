@@ -1,14 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from app.schemas.pit_schemas import PitRead, PitCreate, PitUpdate
 
-from app.database.db import get_db
 from app.models.stint_model import Stint
 from app.models.pitstop_model import PitStop
 from app.repositories import pit_crud, stint_crud
+from app.dependencies import DbSessionDep, SessionCarDep
 
 import logging
 
@@ -16,13 +15,11 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["pitstops"])
 
-DbSession = Annotated[Session, Depends(get_db)]
-
 """ Nested Routes """
 
 
 @router.get("/stints/{stint_id}/pitstops", response_model=PitRead)
-def get_pit_for_stint(stint_id: int, db: DbSession):
+def get_pit_for_stint(stint_id: int, db: DbSessionDep):
     pit = pit_crud.get_one(db, PitStop.stint_id == stint_id)
 
     if pit is None:
@@ -36,7 +33,7 @@ def get_pit_for_stint(stint_id: int, db: DbSession):
 
 
 @router.post("/stints/{stint_id}/pitstops", response_model=PitRead)
-def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
+def create_pit(stint_id: int, pit_create: PitCreate, db: DbSessionDep):
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
     if stint is None:
@@ -59,7 +56,7 @@ def create_pit(stint_id: int, pit_create: PitCreate, db: DbSession):
 
 
 @router.patch("/pitstops/{pitstop_id}", response_model=PitRead)
-def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
+def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSessionDep):
     pitstop = pit_crud.get_one(db, PitStop.id == pitstop_id)
 
     if pitstop is None:
@@ -82,14 +79,14 @@ def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSession):
 
 
 @router.get("/pitstops", response_model=list[PitRead])
-def get_pitstops(db: DbSession):
+def get_pitstops(db: DbSessionDep):
     pits = pit_crud.get_many(db)
     logger.info("Retrieved %d pit stops", len(pits))
     return pits
 
 
 @router.get("/pitstops/session/{session_id}", response_model=list[PitRead])
-def get_pitstops_for_session(session_id: int, db: DbSession):
+def get_pitstops_for_session(session_id: int, db: DbSessionDep):
     stints = stint_crud.get_many(db, Stint.session_id == session_id)
 
     pits = [stint.pit_stop for stint in stints if stint.pit_stop is not None]
@@ -103,7 +100,7 @@ def get_pitstops_for_session(session_id: int, db: DbSession):
 
 
 @router.get("/pitstops/{pit_id}", response_model=PitRead)
-def get_pitstop(pit_id: int, db: DbSession):
+def get_pitstop(pit_id: int, db: DbSessionDep):
     pit = pit_crud.get_one(db, PitStop.id == pit_id)
 
     if pit is None:

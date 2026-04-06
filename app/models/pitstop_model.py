@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import TIMESTAMP, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import TIMESTAMP, ForeignKeyConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,11 +25,7 @@ class PitStop(Base):
         ondelete="CASCADE",
     )
     
-    stint_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("stint.id", ondelete="SET NULL"), nullable=True, unique=True
-    )
     session_car: Mapped["SessionCar"] = relationship(back_populates="pit_stops")
-    stint: Mapped["Stint"] = relationship(back_populates="pit_stop")
 
     road_enter_time: Mapped[float]
     service_start_time: Mapped[float]
