@@ -9,19 +9,31 @@ from app.models import Base
 
 if TYPE_CHECKING:
     from app.models.stint_model import Stint
+    from app.models.session_model import SessionCar
 
 
 class Lap(Base):
     __tablename__ = "lap"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    stint_id: Mapped[int] = mapped_column(ForeignKey("stint.id", ondelete='CASCADE'))
+    session_car_id: Mapped[int] = mapped_column(
+        ForeignKey("session_car.id", ondelete="CASCADE")
+    )
+    stint_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("stint.id", ondelete="SET NULL")
+    )
+    session_car: Mapped["SessionCar"] = relationship(back_populates="laps")
     stint: Mapped["Stint"] = relationship(back_populates="laps")
     number: Mapped[int]
-    time: Mapped[float]
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+    lap_time: Mapped[float]
+    start_time: Mapped[float]
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[Optional[datetime]] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
-    __table_args__ = (
-        UniqueConstraint('stint_id', 'number', name='unique_lap_per_stint'),
+    __table_args__ = UniqueConstraint(
+        "session_car_id", "number", name="unique_lap_per_car"
     )

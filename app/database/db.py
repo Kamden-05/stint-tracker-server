@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-url = os.environ["DATABASE_URL"]
+url = os.environ["TEST_DB"]
 
 try:
     engine = create_engine(url)

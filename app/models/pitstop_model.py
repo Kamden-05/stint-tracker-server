@@ -9,16 +9,20 @@ from app.models import Base
 
 if TYPE_CHECKING:
     from app.models.stint_model import Stint
+    from app.models.session_model import SessionCar
 
 
 class PitStop(Base):
     __tablename__ = "pit_stop"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    stint_id: Mapped[int] = mapped_column(
+    session_car_id: Mapped[int] = mapped_column(
+        ForeignKey("session_car.id", ondelete="CASCADE")
+    )
+    stint_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("stint.id", ondelete="SET NULL"), nullable=True, unique=True
     )
+    session_car: Mapped["SessionCar"] = relationship(back_populates="pit_stops")
     stint: Mapped["Stint"] = relationship(back_populates="pit_stop")
 
     road_enter_time: Mapped[float]
