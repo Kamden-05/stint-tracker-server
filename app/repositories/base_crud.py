@@ -42,6 +42,11 @@ class CRUDRepository:
         stmt = select(self.model).where(*filters).offset(skip).limit(limit)
         return db.scalars(stmt).all()
 
+    def get_by_composite(
+        self, db: Session, session_id: int, car_id: int
+    ) -> Optional[ModelType]:
+        return self.get_one(db, session_id=session_id, car_id=car_id)
+
     def create(self, db: Session, obj: CreateSchemaType) -> Base:
         logger.debug(
             f"Creating record for {self.model.__name__} with data {obj.model_dump()}"
@@ -63,6 +68,8 @@ class CRUDRepository:
         data = obj.model_dump(by_alias=True, exclude_unset=True)
 
         for field, value in data.items():
+            if field in ["session_id", "car_id"]:
+                continue
             setattr(db_obj, field, value)
         db.add(db_obj)
         db.commit()
