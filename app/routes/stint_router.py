@@ -1,13 +1,8 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, status
 from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
-
-from app.database.db import get_db
-from app.models.session_model import SessionCar
 from app.models.stint_model import Stint
-from app.repositories import session_car_crud, stint_crud
+from app.repositories import stint_crud
+from app.dependencies import SessionCarDep, DbSessionDep
 
 import logging
 
@@ -16,28 +11,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix="/sessions/{session_id}/cars/{car_id}/stints", tags=["stints"]
 )
-
-DbSession = Annotated[Session, Depends(get_db)]
-
-
-def get_session_car(session_id: int, car_id: int, db: DbSession) -> SessionCar:
-    car = session_car_crud.get_one(
-        db, SessionCar.session_id == session_id, SessionCar.car_id == car_id
-    )
-
-    if not car:
-        logger.warning(
-            "Session not found with session_id=%s, car_id=%s", session_id, car_id
-        )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Car id={car_id} not found in session with id {session_id}",
-        )
-
-    return car
-
-
-SessionCarDep = Annotated[SessionCar, Depends(get_session_car)]
 
 """ Nested Routes"""
 
@@ -55,7 +28,7 @@ def get_car_stints_for_session(car: SessionCarDep):
 def create_stint(
     car: SessionCarDep,
     stint_create: StintCreate,
-    db: DbSession,
+    db: DbSessionDep,
 ):
     if stint_create.session_id != car.session_id or stint_create.car_id != car.car_id:
         raise HTTPException(
@@ -72,7 +45,7 @@ def create_stint(
 
 @router.patch("/{stint_id}", response_model=StintRead)
 def update_stint(
-    stint_id: int, car: SessionCarDep, stint_update: StintUpdate, db: DbSession
+    stint_id: int, car: SessionCarDep, stint_update: StintUpdate, db: DbSessionDep
 ):
     stint = stint_crud.get_one(
         db,
