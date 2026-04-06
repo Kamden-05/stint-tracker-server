@@ -62,13 +62,6 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
         exclude={"car_id", "car_name", "car_class"}
     )
 
-    car_data = {
-        "session_id": session_create.id,
-        "car_id": session_create.car_id,
-        "car_name": session_create.car_name,
-        "car_class": session_create.car_class,
-    }
-
     try:
         race_session = session_crud.create(db, RaceSession(**session_data))
         logger.info(
@@ -77,7 +70,16 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
             session_create.session_date,
         )
     except IntegrityError as e:
-        logger.error("Duplicate session creation failed: %s", e)
+        logger.info(
+            "Session id=%s already exists, skipping creation", session_create.id
+        )
+
+    car_data = {
+        "session_id": session_create.id,
+        "car_id": session_create.car_id,
+        "car_name": session_create.car_name,
+        "car_class": session_create.car_class,
+    }
 
     try:
         session_car = session_car_crud.create(db, SessionCar(**car_data))
