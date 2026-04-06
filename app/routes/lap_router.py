@@ -1,21 +1,18 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.schemas.lap_schemas import LapRead, LapCreate
-from app.database.db import get_db
 from app.repositories import stint_crud, lap_crud
-from app.models.stint_model import Stint
+from app.models import Stint
+from app.dependencies import SessionCarDep, DbSessionDep
 import logging
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/stints/{stint_id}/laps", tags=["laps"])
-
-DbSession = Annotated[Session, Depends(get_db)]
+router = APIRouter(tags=["laps"])
 
 
-def get_stint(stint_id: int, db: DbSession) -> Stint:
+def get_stint(stint_id: int, db: DbSessionDep) -> Stint:
     stint = stint_crud.get_one(db, Stint.id == stint_id)
 
     if stint is None:
@@ -31,23 +28,37 @@ def get_stint(stint_id: int, db: DbSession) -> Stint:
 StintDep = Annotated[Stint, Depends(get_stint)]
 
 
-@router.post("", response_model=LapRead)
-def create_lap(lap_create: LapCreate, db: DbSession, stint: StintDep):
-
-    try:
-        lap = lap_crud.create(db, lap_create)
-        logger.info("Created lap number %s for stint %s", lap_create.number, stint.id)
-    except IntegrityError as e:
-        logger.error(
-            "Lap number %s already exists for stint %s", lap_create.number, stint.id
-        )
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Lap with lap number {lap_create.number} already exists",
-        ) from e
-    return lap
-
-
-@router.get("", response_model=list[LapRead])
+@router.get("/stints/{stint_id}/laps", response_model=list[LapRead])
 def get_laps_for_stint(stint: StintDep):
     return sorted(stint.laps, key=lambda l: l.number)
+
+
+@router.get("/sessions/{session_id}/cars/{car_id}/laps", response_model=list[LapRead])
+def get_car_laps_for_session(car: SessionCarDep, db: DbSessionDep):
+    stints = stint_crud.get_many(
+        db, Stint.session_id == car.session_id, Stint.car_id == car.car_id
+    )
+
+    laps = [lap for s in stints for lap in s.laps]
+
+    return sorted(laps, key=lambda l: l.number)
+
+
+@router.post("/stints/{stint_id}/laps", response_model=LapRead)
+def create_lap(
+    lap_create: LapCreate, stint: StintDep, car: SessionCarDep, db: DbSessionDep
+):
+    if stint.car_id != car.car_id or stint.session_id != car.session_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Stint {stint.id} does not belong to this car/session",
+        )
+
+    try:
+        lap = lap_crud.create(db, lap_create, stint_id=stint.id)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Lap {lap_create.number} already exists for stint {stint.id}",
+        )
+    return lap

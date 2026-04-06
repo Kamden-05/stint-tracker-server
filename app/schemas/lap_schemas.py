@@ -8,7 +8,7 @@ class LapBase(BaseModel):
 
 
 class LapCreate(LapBase):
-    pass
+    stint_id: int
 
 
 class LapRead(LapBase):
