@@ -3,12 +3,12 @@ from pydantic import BaseModel, ConfigDict
 
 class LapBase(BaseModel):
     number: int
-    start_time: float
+    end_time: float
     lap_time: float
 
 
 class LapCreate(LapBase):
-    stint_id: int
+    pass
 
 
 class LapRead(LapBase):

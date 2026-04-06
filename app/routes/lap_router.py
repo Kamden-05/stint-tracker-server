@@ -45,20 +45,15 @@ def get_car_laps_for_session(car: SessionCarDep, db: DbSessionDep):
 
 
 @router.post("/stints/{stint_id}/laps", response_model=LapRead)
-def create_lap(
-    lap_create: LapCreate, stint: StintDep, car: SessionCarDep, db: DbSessionDep
-):
-    if stint.car_id != car.car_id or stint.session_id != car.session_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Stint {stint.id} does not belong to this car/session",
-        )
-
+def create_lap(lap_create: LapCreate, stint: StintDep, db: DbSessionDep):
     try:
-        lap = lap_crud.create(db, lap_create, stint_id=stint.id)
+        data = lap_create.model_dump()
+        data["stint_id"] = stint.id
+        lap = lap_crud.create(db, LapCreate(**data))
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Lap {lap_create.number} already exists for stint {stint.id}",
         )
+
     return lap

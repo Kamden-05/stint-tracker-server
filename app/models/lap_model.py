@@ -16,7 +16,7 @@ class Lap(Base):
     __tablename__ = "lap"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     session_id: Mapped[int]
     car_id: Mapped[int]
 
@@ -32,7 +32,7 @@ class Lap(Base):
     stint: Mapped["Stint"] = relationship(back_populates="laps")
     number: Mapped[int]
     lap_time: Mapped[float]
-    start_time: Mapped[float]
+    end_time: Mapped[float]
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
     )
@@ -41,5 +41,5 @@ class Lap(Base):
     )
 
     __table_args__ = UniqueConstraint(
-        "session_car_id", "number", name="unique_lap_per_car"
+        "stint_id", "number", name="unique_stint_lap_number"
     )
