@@ -1,10 +1,6 @@
-from typing import Annotated
-
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy.exc import IntegrityError
 from app.schemas.pit_schemas import PitRead, PitCreate, PitUpdate
 
-from app.models.stint_model import Stint
 from app.models.pitstop_model import PitStop
 from app.repositories import pit_crud, stint_crud
 from app.dependencies import DbSessionDep, SessionCarDep
@@ -13,101 +9,78 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(tags=["pitstops"])
-
-""" Nested Routes """
-
-
-@router.get("/stints/{stint_id}/pitstops", response_model=PitRead)
-def get_pit_for_stint(stint_id: int, db: DbSessionDep):
-    pit = pit_crud.get_one(db, PitStop.stint_id == stint_id)
-
-    if pit is None:
-        logger.warning("No pit stop found for stint id=%s", stint_id)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pit Stop with stint id {stint_id} not found",
-        )
-
-    return pit
+router = APIRouter(
+    prefix="/sessions/{session_id}/cars/{car_id}/pitstops", tags=["pitstops"]
+)
 
 
-@router.post("/stints/{stint_id}/pitstops", response_model=PitRead)
-def create_pit(stint_id: int, pit_create: PitCreate, db: DbSessionDep):
-    stint = stint_crud.get_one(db, Stint.id == stint_id)
+@router.get("", response_model=list[PitRead])
+def get_car_pitstops_for_session(car: SessionCarDep):
+    return sorted(car.pit_stops, key=lambda p: p.road_enter_time)
 
-    if stint is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Stint with id {stint_id} not found",
-        )
+
+@router.post(
+    "",
+    response_model=PitRead,
+    response_model_exclude_none=True,
+)
+def create_pit(car: SessionCarDep, pit_create: PitCreate, db: DbSessionDep):
+    pit_data = pit_create.model_dump()
+    pit_data["session_id"] = car.session_id
+    pit_data["car_id"] = car.car_id
 
     try:
-        pit = pit_crud.create(db, pit_create)
-        logger.info("Create pit stop for stint %s", stint.id)
-    except IntegrityError as e:
-        logger.error("Pit stop already exists for stint %s", stint.id)
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Pit Stop with stint id {pit_create.stint_id} already exists",
-        ) from e
-
-    return pit
-
-
-@router.patch("/pitstops/{pitstop_id}", response_model=PitRead)
-def update_pit(pitstop_id: int, pit_update: PitUpdate, db: DbSessionDep):
-    pitstop = pit_crud.get_one(db, PitStop.id == pitstop_id)
-
-    if pitstop is None:
-        logger.warning("No pit stop found for id=%s", pitstop_id)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pitstop with id {pitstop_id} not found",
+        pitstop = pit_crud.create(db, pit_data)
+        logger.info(
+            "Created pitstop %s for session %s car %s",
+            pitstop.id,
+            car.session_id,
+            car.car_id,
         )
-
-    try:
-        pitstop = pit_crud.update(db, pitstop, pit_update)
     except Exception as e:
-        logger.error("Failed to update pit stop with id=%s", pitstop_id)
+        logger.error("Failed to create pitstop: %s", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Couldn't update pitstop with id {pitstop_id}. Error: {str(e)}",
+            detail=f"Couldn't create pitstop. Error: {str(e)}",
         ) from e
 
     return pitstop
 
 
-@router.get("/pitstops", response_model=list[PitRead])
-def get_pitstops(db: DbSessionDep):
-    pits = pit_crud.get_many(db)
-    logger.info("Retrieved %d pit stops", len(pits))
-    return pits
+@router.patch("", response_model=PitRead)
+def update_pit(car: SessionCarDep, pit_update: PitUpdate, db: DbSessionDep):
+    pitstops = pit_crud.get_many(
+        db,
+        PitStop.session_id == car.session_id,
+        PitStop.car_id == car.car_id,
+        PitStop.road_exit_time == None,
+    )
 
-
-@router.get("/pitstops/session/{session_id}", response_model=list[PitRead])
-def get_pitstops_for_session(session_id: int, db: DbSessionDep):
-    stints = stint_crud.get_many(db, Stint.session_id == session_id)
-
-    pits = [stint.pit_stop for stint in stints if stint.pit_stop is not None]
-
-    if not pits:
-        logger.info("No pit stops found for session id=%s", session_id)
-        return []
-
-    logger.info("Retrieved %d pit stops for session id=%s", len(pits), session_id)
-    return pits
-
-
-@router.get("/pitstops/{pit_id}", response_model=PitRead)
-def get_pitstop(pit_id: int, db: DbSessionDep):
-    pit = pit_crud.get_one(db, PitStop.id == pit_id)
-
-    if pit is None:
-        logger.warning("No pit stop found for id=%s", pit_id)
+    if not pitstops:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Pit Stop with id {pit_id} not found",
+            detail=f"No open pitstops found for session {car.session_id} and car {car.car_id}",
         )
 
-    return pit
+    open_pitstops_sorted = sorted(pitstops, key=lambda p: p.road_enter_time)
+    latest_pitstop = open_pitstops_sorted[-1]
+
+    if len(open_pitstops_sorted) > 1:
+        logger.warning("Multiple open pitstops found")
+
+    try:
+        updated_pitstop = pit_crud.update(db, latest_pitstop, pit_update)
+        logger.info(
+            "Updated pitstop %s for session %s car %s",
+            latest_pitstop.id,
+            car.session_id,
+            car.car_id,
+        )
+    except Exception as e:
+        logger.error("Failed to update stint: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Couldn't update stint. Error: {str(e)}",
+        ) from e
+
+    return updated_pitstop

@@ -12,8 +12,6 @@ router = APIRouter(
     prefix="/sessions/{session_id}/cars/{car_id}/stints", tags=["stints"]
 )
 
-""" Nested Routes"""
-
 
 @router.get("", response_model=list[StintRead])
 def get_car_stints_for_session(car: SessionCarDep):
