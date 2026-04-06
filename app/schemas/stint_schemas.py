@@ -74,8 +74,7 @@ class StintRead(StintBase):
 
 
 class StintCreate(StintBase):
-    session_id: int
-    car_id: int
+    pass
 
 
 class StintUpdate(BaseModel):

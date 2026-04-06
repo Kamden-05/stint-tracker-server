@@ -8,9 +8,7 @@ class LapBase(BaseModel):
 
 
 class LapCreate(LapBase):
-    session_id: int
-    car_id: int
-    stint_id: int
+    pass
 
 
 class LapRead(LapBase):

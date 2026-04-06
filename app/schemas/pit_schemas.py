@@ -66,8 +66,7 @@ class PitRead(PitBase):
 
 
 class PitCreate(PitBase):
-    session_id: int
-    car_id: int
+    pass
 
 
 class PitUpdate(BaseModel):
