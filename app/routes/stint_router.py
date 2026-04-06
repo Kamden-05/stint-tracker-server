@@ -30,15 +30,24 @@ def create_stint(
     stint_create: StintCreate,
     db: DbSessionDep,
 ):
-    if stint_create.session_id != car.session_id or stint_create.car_id != car.car_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Session ID or Car ID in request body does not match URL",
+    stint_data = stint_create.model_dump()
+    stint_data["session_id"] = car.session_id
+    stint_data["car_id"] = car.car_id
+
+    try:
+        stint = stint_crud.create(db, stint_data)
+        logger.info(
+            "Created stint %s for session %s car %s",
+            stint.id,
+            car.session_id,
+            car.car_id,
         )
-    stint = stint_crud.create(db, stint_create)
-    logger.info(
-        "Created stint %s for session %s car %s", stint.id, car.session_id, car.car_id
-    )
+    except Exception as e:
+        logger.error("Failed to create stint: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Couldn't create stint. Error: {str(e)}",
+        ) from e
 
     return stint
 
