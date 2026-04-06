@@ -55,8 +55,13 @@ class CRUDRepository:
         data = obj.model_dump(by_alias=True)
         db_obj = self.model(**data)
         db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
+        try:
+            db.commit()
+            db.refresh(db_obj)
+        except Exception as e:
+            db.rollback()
+            raise
+
         return db_obj
 
     def update(self, db: Session, db_obj: ModelType, obj: UpdateSchemaType) -> Base:
@@ -71,7 +76,14 @@ class CRUDRepository:
             if field in ["session_id", "car_id"]:
                 continue
             setattr(db_obj, field, value)
+
         db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
+
+        try:
+            db.commit()
+            db.refresh(db_obj)
+        except Exception as e:
+            db.rollback()
+            raise
+
         return db_obj
