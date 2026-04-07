@@ -20,10 +20,15 @@ class Lap(Base):
     session_id: Mapped[int]
     car_id: Mapped[int]
 
-    __table_args__ = ForeignKeyConstraint(
-        ["session_id", "car_id"],
-        ["session_car.session_id", "session_car.car_id"],
-        ondelete="CASCADE",
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["session_id", "car_id"],
+            ["session_car.session_id", "session_car.car_id"],
+            ondelete="CASCADE",
+        ),
+        UniqueConstraint(
+        "stint_id", "number", name="unique_stint_lap_number"
+        ),
     )
     stint_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("stint.id", ondelete="SET NULL")
@@ -38,8 +43,4 @@ class Lap(Base):
     )
     updated_at: Mapped[Optional[datetime]] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
-
-    __table_args__ = UniqueConstraint(
-        "stint_id", "number", name="unique_stint_lap_number"
     )

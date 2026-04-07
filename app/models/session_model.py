@@ -22,7 +22,7 @@ class RaceSession(Base):
     track: Mapped[str] = mapped_column(String)
 
     session_cars: Mapped[List["SessionCar"]] = relationship(
-        back_populates="session", order_by="SessionCar.id"
+        back_populates="session", order_by="SessionCar.car_id"
     )
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
@@ -51,7 +51,7 @@ class SessionCar(Base):
         back_populates="session_car", order_by="PitStop.road_enter_time"
     )
     laps: Mapped[List["Lap"]] = relationship(
-        back_populates="session_car", order_by="Lap.start_time"
+        back_populates="session_car", order_by="Lap.end_time"
     )
 
     created_at: Mapped[datetime] = mapped_column(
@@ -61,4 +61,6 @@ class SessionCar(Base):
         TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    __table_args__ = PrimaryKeyConstraint("session_id", "car_id", name="session_car_pkyes")
+    __table_args__ = (
+        PrimaryKeyConstraint("session_id", "car_id", name="session_car_pkyes"),
+    )

@@ -74,7 +74,9 @@ def update_stint(
         )
 
     try:
-        updated_stint = stint_crud.update(db, stint, stint_update)
+        updated_stint = stint_crud.update(
+            db, stint, stint_update.model_dump(exclude_unset=True, by_alias=True)
+        )
         logger.info(
             "Updated stint %s for session %s car %s",
             stint.id,

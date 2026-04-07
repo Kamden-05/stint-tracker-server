@@ -69,7 +69,9 @@ def update_pit(car: SessionCarDep, pit_update: PitUpdate, db: DbSessionDep):
         logger.warning("Multiple open pitstops found")
 
     try:
-        updated_pitstop = pit_crud.update(db, latest_pitstop, pit_update)
+        updated_pitstop = pit_crud.update(
+            db, latest_pitstop, pit_update.model_dump(exclude_unset=True, by_alias=True)
+        )
         logger.info(
             "Updated pitstop %s for session %s car %s",
             latest_pitstop.id,

@@ -58,12 +58,12 @@ def get_session(session_id: int, db: DbSession):
 
 @router.post("", response_model=SessionCarRead)
 def create_session(session_create: RaceSessionCreate, db: DbSession):
-    session_data = RaceSessionCreate.model_dump(
+    session_data = session_create.model_dump(
         exclude={"car_id", "car_name", "car_class"}
     )
 
     try:
-        race_session = session_crud.create(db, RaceSession(**session_data))
+        race_session = session_crud.create(db, session_data)
         logger.info(
             "Creating session for id=%s date=%s",
             session_create.id,
@@ -82,7 +82,7 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
     }
 
     try:
-        session_car = session_car_crud.create(db, SessionCar(**car_data))
+        session_car = session_car_crud.create(db, car_data)
         logger.info(
             "Creating car for session with id=%s date=%s",
             session_create.car_id,

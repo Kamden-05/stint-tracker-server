@@ -19,12 +19,14 @@ class PitStop(Base):
     session_id: Mapped[int]
     car_id: Mapped[int]
 
-    __table_args__ = ForeignKeyConstraint(
-        ["session_id", "car_id"],
-        ["session_car.session_id", "session_car.car_id"],
-        ondelete="CASCADE",
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["session_id", "car_id"],
+            ["session_car.session_id", "session_car.car_id"],
+            ondelete="CASCADE",
+        ),
     )
-    
+
     session_car: Mapped["SessionCar"] = relationship(back_populates="pit_stops")
 
     road_enter_time: Mapped[float]

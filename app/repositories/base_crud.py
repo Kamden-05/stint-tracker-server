@@ -47,12 +47,7 @@ class CRUDRepository:
     ) -> Optional[ModelType]:
         return self.get_one(db, session_id=session_id, car_id=car_id)
 
-    def create(self, db: Session, obj: CreateSchemaType) -> Base:
-        logger.debug(
-            f"Creating record for {self.model.__name__} with data {obj.model_dump()}"
-        )
-
-        data = obj.model_dump(by_alias=True)
+    def create(self, db: Session, data: dict) -> Base:
         db_obj = self.model(**data)
         db.add(db_obj)
         try:
@@ -64,13 +59,7 @@ class CRUDRepository:
 
         return db_obj
 
-    def update(self, db: Session, db_obj: ModelType, obj: UpdateSchemaType) -> Base:
-
-        logger.debug(
-            f"Updating record for {self.model.__name__} with data {obj.model_dump(exclude_unset=True)}"
-        )
-
-        data = obj.model_dump(by_alias=True, exclude_unset=True)
+    def update(self, db: Session, db_obj: ModelType, data: dict) -> Base:
 
         for field, value in data.items():
             if field in ["session_id", "car_id"]:

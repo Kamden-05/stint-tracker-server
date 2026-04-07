@@ -21,15 +21,17 @@ class Stint(Base):
     session_id: Mapped[int]
     car_id: Mapped[int]
 
-    __table_args__ = ForeignKeyConstraint(
-        ["session_id", "car_id"],
-        ["session_car.session_id", "session_car.car_id"],
-        ondelete="CASCADE",
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["session_id", "car_id"],
+            ["session_car.session_id", "session_car.car_id"],
+            ondelete="CASCADE",
+        ),
     )
     session_car: Mapped["SessionCar"] = relationship(back_populates="stints")
 
     laps: Mapped[List["Lap"]] = relationship(
-        back_populates="stint", order_by="Lap.start_time"
+        back_populates="stint", order_by="Lap.end_time"
     )
 
     driver_name: Mapped[str] = mapped_column(String)
