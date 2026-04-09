@@ -1,13 +1,7 @@
 ./.server
-app/__pycache__
-app/database/__pycache__
-app/models/__pycache__
-app/routes/__pycache__
-app/services/__pycache__
+__pycache__
 .env
-app/repositories/__pycache__
 keys.json
-app/schemas/__pycache__
 .server
 lambda.zip
 layer.zip
