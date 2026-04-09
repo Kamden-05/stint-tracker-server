@@ -16,11 +16,12 @@ class PitBase(BaseModel):
 
 class PitRead(PitBase):
     id: int
-    
+
     car_id: int
     session_id: int
     road_enter_time: float = Field(exclude=True)
     service_start_time: float = Field(exclude=True)
+    fuel_start_amount: float = Field(exclude=True)
     service_end_time: Optional[float] = Field(exclude=True, default=None)
     road_exit_time: Optional[float] = Field(exclude=True, default=None)
     fuel_end_amount: Optional[float] = Field(exclude=True, default=None)

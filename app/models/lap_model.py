@@ -26,9 +26,7 @@ class Lap(Base):
             ["session_car.session_id", "session_car.car_id"],
             ondelete="CASCADE",
         ),
-        UniqueConstraint(
-        "stint_id", "number", name="unique_stint_lap_number"
-        ),
+        UniqueConstraint("stint_id", "number", name="unique_stint_lap_number"),
     )
     stint_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("stint.id", ondelete="SET NULL")
@@ -37,6 +35,7 @@ class Lap(Base):
     stint: Mapped["Stint"] = relationship(back_populates="laps")
     number: Mapped[int]
     lap_time: Mapped[float]
+    end_fuel: Mapped[float]
     end_time: Mapped[float]
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()

@@ -45,7 +45,7 @@ class StintRead(StintBase):
     end_time: Optional[float] = Field(default=None, exclude=True)
     end_position: Optional[float] = None
     end_fuel: Optional[float] = None
-    end_incidents: Optional[float] = Field(default=None, exclude=True)
+    end_incidents: Optional[int] = Field(default=None, exclude=True)
 
     @field_serializer("track_wetness", "sky_cover")
     def serialize_enums(self, value, _info):
@@ -81,5 +81,5 @@ class StintUpdate(BaseModel):
     end_time: Optional[float] = None
     end_position: Optional[int] = None
     end_fuel: Optional[float] = None
-    end_incidents: Optional[float] = None
+    end_incidents: Optional[int] = None
     is_complete: bool = False

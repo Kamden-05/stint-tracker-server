@@ -86,8 +86,7 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
         logger.info(
             "Creating car for session with id=%s date=%s",
             session_create.car_id,
-            session_create.car_name,
-            session_create.car_class,
+            session_create.session_date,
         )
     except IntegrityError as e:
         logger.error("Duplciate car creation failed: %s", e)
