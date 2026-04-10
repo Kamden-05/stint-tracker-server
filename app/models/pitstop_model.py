@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.session_model import SessionCars
+    from app.models import SessionCars
 
 
 class PitStops(Base):
@@ -41,6 +41,7 @@ class PitStops(Base):
     service_end_time: Mapped[Optional[float]]
     road_exit_time: Mapped[Optional[float]]
 
+    # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
     )

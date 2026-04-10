@@ -8,9 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.lap_model import Laps
-    from app.models.session_model import SessionCars
-    from app.models.pitstop_model import PitStops
+    from app.models import SessionCars, Laps
 
 
 class Stints(Base):
@@ -50,6 +48,7 @@ class Stints(Base):
 
     is_complete: Mapped[bool] = mapped_column(default=False)
 
+    # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
     )

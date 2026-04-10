@@ -18,6 +18,7 @@ class ApiKey(Base):
     name: Mapped[Optional[str]] = mapped_column(String)
     active: Mapped[bool] = mapped_column(default=True)
 
+    # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
     )

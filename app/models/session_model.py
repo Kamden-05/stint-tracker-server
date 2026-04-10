@@ -1,6 +1,5 @@
 from datetime import datetime, date
-from typing import TYPE_CHECKING, List, Optional
-
+from typing import List, Optional, TYPE_CHECKING
 from sqlalchemy import TIMESTAMP, Date, String, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -8,9 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.stint_model import Stints
-    from app.models.pitstop_model import PitStops
-    from app.models.lap_model import Laps
+    from app.models import Stints, PitStops, Laps
 
 
 class Sessions(Base):
@@ -24,13 +21,14 @@ class Sessions(Base):
     session_cars: Mapped[List["SessionCars"]] = relationship(
         back_populates="session", order_by="SessionCars.car_id"
     )
+
+    # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[Optional[datetime]] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-
 
 class SessionCars(Base):
     __tablename__ = "session_cars"
@@ -54,6 +52,7 @@ class SessionCars(Base):
         back_populates="session_car", order_by="Laps.end_time"
     )
 
+    # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
     )
