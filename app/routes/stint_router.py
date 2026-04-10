@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, HTTPException, status
 
 from app.dependencies import DbSessionDep, SessionCarDep
-from app.models.stint_model import Stint
+from app.models.stint_model import Stints
 from app.repositories import stint_crud
 from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
 
@@ -57,9 +57,9 @@ def update_stint(
 ):
     stint = stint_crud.get_one(
         db,
-        Stint.id == stint_id,
-        Stint.session_id == car.session_id,
-        Stint.car_id == car.car_id,
+        Stints.id == stint_id,
+        Stints.session_id == car.session_id,
+        Stints.car_id == car.car_id,
     )
 
     if stint is None:

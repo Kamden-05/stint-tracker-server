@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import DbSessionDep, SessionCarDep
-from app.models import RaceSession
+from app.models import Sessions
 from app.repositories import session_car_crud, session_crud
 from app.schemas import (
     RaceSessionCreate,
@@ -43,7 +43,7 @@ def list_sessions(
 
 @router.get("/{session_id}", response_model=RaceSessionRead)
 def get_session(session_id: int, db: DbSessionDep):
-    session = session_crud.get_one(db, RaceSession.id == session_id)
+    session = session_crud.get_one(db, Sessions.id == session_id)
 
     if session is None:
         raise HTTPException(

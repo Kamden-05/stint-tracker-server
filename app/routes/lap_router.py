@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import DbSessionDep, SessionCarDep
-from app.models import Stint
+from app.models import Stints
 from app.repositories import lap_crud, stint_crud
 from app.schemas.lap_schemas import LapCreate, LapRead
 
@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["laps"])
 
 
-def get_stint(stint_id: int, db: DbSessionDep) -> Stint:
-    stint = stint_crud.get_one(db, Stint.id == stint_id)
+def get_stint(stint_id: int, db: DbSessionDep) -> Stints:
+    stint = stint_crud.get_one(db, Stints.id == stint_id)
 
     if stint is None:
         logger.warning("Stint id=%s not found", stint_id)
@@ -27,7 +27,7 @@ def get_stint(stint_id: int, db: DbSessionDep) -> Stint:
     return stint
 
 
-StintDep = Annotated[Stint, Depends(get_stint)]
+StintDep = Annotated[Stints, Depends(get_stint)]
 
 
 @router.get("/stints/{stint_id}/laps", response_model=list[LapRead])
@@ -38,7 +38,7 @@ def get_laps_for_stint(stint: StintDep):
 @router.get("/sessions/{session_id}/cars/{car_id}/laps", response_model=list[LapRead])
 def get_car_laps_for_session(car: SessionCarDep, db: DbSessionDep):
     stints = stint_crud.get_many(
-        db, Stint.session_id == car.session_id, Stint.car_id == car.car_id
+        db, Stints.session_id == car.session_id, Stints.car_id == car.car_id
     )
 
     laps = [lap for s in stints for lap in s.laps]

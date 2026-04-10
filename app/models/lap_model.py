@@ -8,12 +8,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.stint_model import Stint
-    from app.models.session_model import SessionCar
+    from app.models.stint_model import Stints
+    from app.models.session_model import SessionCars
 
 
-class Lap(Base):
-    __tablename__ = "lap"
+class Laps(Base):
+    __tablename__ = "laps"
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -23,16 +23,16 @@ class Lap(Base):
     __table_args__ = (
         ForeignKeyConstraint(
             ["session_id", "car_id"],
-            ["session_car.session_id", "session_car.car_id"],
+            ["session_cars.session_id", "session_cars.car_id"],
             ondelete="CASCADE",
         ),
         UniqueConstraint("stint_id", "number", name="unique_stint_lap_number"),
     )
     stint_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("stint.id", ondelete="SET NULL")
+        ForeignKey("stints.id", ondelete="SET NULL")
     )
-    session_car: Mapped["SessionCar"] = relationship(back_populates="laps")
-    stint: Mapped["Stint"] = relationship(back_populates="laps")
+    session_car: Mapped["SessionCars"] = relationship(back_populates="laps")
+    stint: Mapped["Stints"] = relationship(back_populates="laps")
     number: Mapped[int]
     lap_time: Mapped[float]
     end_fuel: Mapped[float]

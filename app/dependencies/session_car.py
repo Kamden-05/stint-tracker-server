@@ -4,15 +4,15 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 
 from app.dependencies.db_session import DbSessionDep
-from app.models.session_model import SessionCar
+from app.models.session_model import SessionCars
 from app.repositories import session_car_crud
 
 logger = logging.getLogger(__name__)
 
 
-def get_session_car(session_id: int, car_id: int, db: DbSessionDep) -> SessionCar:
+def get_session_car(session_id: int, car_id: int, db: DbSessionDep) -> SessionCars:
     car = session_car_crud.get_one(
-        db, SessionCar.session_id == session_id, SessionCar.car_id == car_id
+        db, SessionCars.session_id == session_id, SessionCars.car_id == car_id
     )
 
     if not car:
@@ -27,4 +27,4 @@ def get_session_car(session_id: int, car_id: int, db: DbSessionDep) -> SessionCa
     return car
 
 
-SessionCarDep = Annotated[SessionCar, Depends(get_session_car)]
+SessionCarDep = Annotated[SessionCars, Depends(get_session_car)]

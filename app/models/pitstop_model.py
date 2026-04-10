@@ -8,12 +8,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.stint_model import Stint
-    from app.models.session_model import SessionCar
+    from app.models.session_model import SessionCars
 
 
-class PitStop(Base):
-    __tablename__ = "pit_stop"
+class PitStops(Base):
+    __tablename__ = "pit_stops"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     session_id: Mapped[int]
@@ -22,12 +21,12 @@ class PitStop(Base):
     __table_args__ = (
         ForeignKeyConstraint(
             ["session_id", "car_id"],
-            ["session_car.session_id", "session_car.car_id"],
+            ["session_cars.session_id", "session_cars.car_id"],
             ondelete="CASCADE",
         ),
     )
 
-    session_car: Mapped["SessionCar"] = relationship(back_populates="pit_stops")
+    session_car: Mapped["SessionCars"] = relationship(back_populates="pit_stops")
 
     road_enter_time: Mapped[float]
     service_start_time: Mapped[float]

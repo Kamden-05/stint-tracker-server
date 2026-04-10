@@ -2,12 +2,12 @@ from collections import defaultdict
 from typing import Optional
 
 from app.dependencies import DbSessionDep
-from app.models import Lap, PitStop, RaceSession, SessionCar, Stint
+from app.models import Laps, PitStops, Sessions, SessionCars, Stints
 from app.repositories import lap_crud, pit_crud, session_crud, stint_crud
 from app.schemas import RaceReport, StintReport
 
 
-def _tires_changed(pit: Optional[PitStop]) -> bool:
+def _tires_changed(pit: Optional[PitStops]) -> bool:
     if pit is None:
         return False
 
@@ -21,20 +21,20 @@ def _tires_changed(pit: Optional[PitStop]) -> bool:
     )
 
 
-def _repairs_taken(pit: Optional[PitStop]) -> bool:
+def _repairs_taken(pit: Optional[PitStops]) -> bool:
     if pit is None:
         return False
     return pit.required_repair_time > 0.0 or pit.optional_repair_time > 0.0
 
 
-def _get_service_time(pit: Optional[PitStop]) -> Optional[float]:
+def _get_service_time(pit: Optional[PitStops]) -> Optional[float]:
     if pit is None or pit.service_end_time is None:
         return None
 
     return pit.service_end_time - pit.service_start_time
 
 
-def _get_refuel_amount(pit: Optional[PitStop]) -> Optional[float]:
+def _get_refuel_amount(pit: Optional[PitStops]) -> Optional[float]:
     if pit is None or pit.fuel_end_amount is None:
         return None
 
@@ -48,16 +48,16 @@ def _get_avg_laptime(times: list[float]) -> Optional[float]:
     return sum(times) / len(times)
 
 
-def generate_race_summary(car: SessionCar, db: DbSessionDep) -> RaceReport:
+def generate_race_summary(car: SessionCars, db: DbSessionDep) -> RaceReport:
     stint_reports = []
-    stints: list[Stint] = stint_crud.get_many(
-        db, Stint.session_id == car.session_id, Stint.car_id == car.car_id
+    stints: list[Stints] = stint_crud.get_many(
+        db, Stints.session_id == car.session_id, Stints.car_id == car.car_id
     )
-    pitstops: list[PitStop] = pit_crud.get_many(
-        db, PitStop.session_id == car.session_id, PitStop.car_id == car.car_id
+    pitstops: list[PitStops] = pit_crud.get_many(
+        db, PitStops.session_id == car.session_id, PitStops.car_id == car.car_id
     )
-    laps: list[Lap] = lap_crud.get_many(
-        db, Lap.session_id == car.session_id, Lap.car_id == car.car_id
+    laps: list[Laps] = lap_crud.get_many(
+        db, Laps.session_id == car.session_id, Laps.car_id == car.car_id
     )
 
     lap_times = defaultdict(list)
@@ -105,7 +105,7 @@ def generate_race_summary(car: SessionCar, db: DbSessionDep) -> RaceReport:
 
         stint_reports.append(stint_report)
 
-    session: RaceSession = session_crud.get_one(db, RaceSession.id == car.session_id)
+    session: Sessions = session_crud.get_one(db, Sessions.id == car.session_id)
 
     return RaceReport(
         session_id=car.session_id,

@@ -8,21 +8,21 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.stint_model import Stint
-    from app.models.pitstop_model import PitStop
-    from app.models.lap_model import Lap
+    from app.models.stint_model import Stints
+    from app.models.pitstop_model import PitStops
+    from app.models.lap_model import Laps
 
 
-class RaceSession(Base):
-    __tablename__ = "session"
+class Sessions(Base):
+    __tablename__ = "sessions"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     session_date: Mapped[date] = mapped_column(Date, default=date.today)
     race_duration: Mapped[int]
     track: Mapped[str] = mapped_column(String)
 
-    session_cars: Mapped[List["SessionCar"]] = relationship(
-        back_populates="session", order_by="SessionCar.car_id"
+    session_cars: Mapped[List["SessionCars"]] = relationship(
+        back_populates="session", order_by="SessionCars.car_id"
     )
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now()
@@ -32,26 +32,26 @@ class RaceSession(Base):
     )
 
 
-class SessionCar(Base):
-    __tablename__ = "session_car"
+class SessionCars(Base):
+    __tablename__ = "session_cars"
 
     session_id: Mapped[int] = mapped_column(
-        ForeignKey("session.id", ondelete="CASCADE")
+        ForeignKey("sessions.id", ondelete="CASCADE")
     )
     car_id: Mapped[int]
     car_name: Mapped[str]
     car_class: Mapped[str]
 
-    session: Mapped["RaceSession"] = relationship(back_populates="session_cars")
+    session: Mapped["Sessions"] = relationship(back_populates="session_cars")
 
-    stints: Mapped[List["Stint"]] = relationship(
-        back_populates="session_car", order_by="Stint.start_time"
+    stints: Mapped[List["Stints"]] = relationship(
+        back_populates="session_car", order_by="Stints.start_time"
     )
-    pit_stops: Mapped[List["PitStop"]] = relationship(
-        back_populates="session_car", order_by="PitStop.road_enter_time"
+    pit_stops: Mapped[List["PitStops"]] = relationship(
+        back_populates="session_car", order_by="PitStops.road_enter_time"
     )
-    laps: Mapped[List["Lap"]] = relationship(
-        back_populates="session_car", order_by="Lap.end_time"
+    laps: Mapped[List["Laps"]] = relationship(
+        back_populates="session_car", order_by="Laps.end_time"
     )
 
     created_at: Mapped[datetime] = mapped_column(

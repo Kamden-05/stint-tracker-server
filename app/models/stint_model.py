@@ -1,20 +1,20 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import TIMESTAMP, ForeignKey, String, ForeignKeyConstraint
+from sqlalchemy import TIMESTAMP, String, ForeignKeyConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models import Base
 
 if TYPE_CHECKING:
-    from app.models.lap_model import Lap
-    from app.models.session_model import SessionCar
-    from app.models.pitstop_model import PitStop
+    from app.models.lap_model import Laps
+    from app.models.session_model import SessionCars
+    from app.models.pitstop_model import PitStops
 
 
-class Stint(Base):
-    __tablename__ = "stint"
+class Stints(Base):
+    __tablename__ = "stints"
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -24,14 +24,14 @@ class Stint(Base):
     __table_args__ = (
         ForeignKeyConstraint(
             ["session_id", "car_id"],
-            ["session_car.session_id", "session_car.car_id"],
+            ["session_cars.session_id", "session_cars.car_id"],
             ondelete="CASCADE",
         ),
     )
-    session_car: Mapped["SessionCar"] = relationship(back_populates="stints")
+    session_car: Mapped["SessionCars"] = relationship(back_populates="stints")
 
-    laps: Mapped[List["Lap"]] = relationship(
-        back_populates="stint", order_by="Lap.end_time"
+    laps: Mapped[List["Laps"]] = relationship(
+        back_populates="stint", order_by="Laps.end_time"
     )
 
     driver_name: Mapped[str] = mapped_column(String)
