@@ -17,6 +17,7 @@ class ApiKey(Base):
     )
     name: Mapped[Optional[str]] = mapped_column(String)
     active: Mapped[bool] = mapped_column(default=True)
+    is_admin: Mapped[bool] = mapped_column(default=False)
 
     # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
