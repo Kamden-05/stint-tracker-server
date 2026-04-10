@@ -1,9 +1,6 @@
-from pydantic import BaseModel, ConfigDict
 import datetime
 
-from app.schemas.stint_schemas import StintRead
-from app.schemas.pit_schemas import PitRead
-from app.schemas.lap_schemas import LapRead
+from pydantic import BaseModel, ConfigDict
 
 
 class RaceSessionBase(BaseModel):

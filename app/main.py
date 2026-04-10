@@ -1,8 +1,10 @@
+import logging
+import sys
+
 from fastapi import FastAPI
 from mangum import Mangum
 
-import logging
-import sys
+from app.routes import lap_router, pit_router, session_router, stint_router
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -10,13 +12,6 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(sys.stdout),
     ],
-)
-
-from app.routes import (
-    lap_router,
-    session_router,
-    stint_router,
-    pit_router,
 )
 
 app = FastAPI()

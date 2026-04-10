@@ -1,11 +1,13 @@
+import logging
 from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
-from app.schemas.lap_schemas import LapRead, LapCreate
-from app.repositories import stint_crud, lap_crud
+
+from app.dependencies import DbSessionDep, SessionCarDep
 from app.models import Stint
-from app.dependencies import SessionCarDep, DbSessionDep
-import logging
+from app.repositories import lap_crud, stint_crud
+from app.schemas.lap_schemas import LapCreate, LapRead
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +54,10 @@ def create_lap(lap_create: LapCreate, stint: StintDep, db: DbSessionDep):
         lap_data["session_id"] = stint.session_id
         lap_data["car_id"] = stint.car_id
         lap = lap_crud.create(db, lap_data)
-    except IntegrityError:
+    except IntegrityError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Lap {lap_create.number} already exists for stint {stint.id}",
-        )
+        ) from e
 
     return lap

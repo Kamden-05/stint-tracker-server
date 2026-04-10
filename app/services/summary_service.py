@@ -1,9 +1,10 @@
-from app.schemas.report_schemas import StintReport, RaceReport
-from app.dependencies import DbSessionDep
-from app.repositories import session_crud, stint_crud, lap_crud, pit_crud
-from app.models import SessionCar, PitStop, RaceSession, Stint, Lap
-from typing import Optional
 from collections import defaultdict
+from typing import Optional
+
+from app.dependencies import DbSessionDep
+from app.models import Lap, PitStop, RaceSession, SessionCar, Stint
+from app.repositories import lap_crud, pit_crud, session_crud, stint_crud
+from app.schemas import RaceReport, StintReport
 
 
 def _tires_changed(pit: Optional[PitStop]) -> bool:

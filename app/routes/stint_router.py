@@ -1,10 +1,11 @@
+import logging
+
 from fastapi import APIRouter, HTTPException, status
-from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
+
+from app.dependencies import DbSessionDep, SessionCarDep
 from app.models.stint_model import Stint
 from app.repositories import stint_crud
-from app.dependencies import SessionCarDep, DbSessionDep
-
-import logging
+from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
 
 logger = logging.getLogger(__name__)
 

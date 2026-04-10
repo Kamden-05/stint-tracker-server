@@ -1,23 +1,19 @@
-from typing import Annotated, Optional
+import logging
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.exc import IntegrityError
-from app.schemas.session_schemas import (
+
+from app.dependencies import DbSessionDep, SessionCarDep
+from app.models import RaceSession
+from app.repositories import session_car_crud, session_crud
+from app.schemas import (
     RaceSessionCreate,
     RaceSessionRead,
     SessionCarRead,
+    RaceReport,
 )
-
-from app.schemas.report_schemas import RaceReport
-
-from app.database.db import get_db
-from app.models import RaceSession
-from app.repositories import session_crud, session_car_crud
 from app.services import generate_race_summary
-from app.dependencies import SessionCarDep, DbSessionDep
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -65,13 +61,13 @@ def create_session(session_create: RaceSessionCreate, db: DbSessionDep):
     )
 
     try:
-        race_session = session_crud.create(db, session_data)
+        session_crud.create(db, session_data)
         logger.info(
             "Creating session for id=%s date=%s",
             session_create.id,
             session_create.session_date,
         )
-    except IntegrityError as e:
+    except IntegrityError:
         logger.info(
             "Session id=%s already exists, skipping creation", session_create.id
         )
@@ -95,7 +91,7 @@ def create_session(session_create: RaceSessionCreate, db: DbSessionDep):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Car with id {session_create.car_id} already exists for session with id {session_create.id}",
-        )
+        ) from e
 
     return session_car
 

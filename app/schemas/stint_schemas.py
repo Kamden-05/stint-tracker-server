@@ -1,6 +1,8 @@
-from pydantic import BaseModel, computed_field, Field, field_serializer, ConfigDict
 from enum import Enum
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_serializer
+
 from app.schemas.lap_schemas import LapBase as Lap
 
 

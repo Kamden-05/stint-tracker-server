@@ -1,14 +1,15 @@
-from typing import Type, TypeVar, Optional, List
+import logging
+from typing import List, Optional, Type, TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Base
-import logging
 
 logger = logging.getLogger(__name__)
 
+# pylint: disable=invalid-name
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
@@ -21,7 +22,7 @@ class CRUDRepository:
         self.name = model.__name__
 
     def get_one(self, db: Session, *args, **kwargs) -> Optional[ModelType]:
-        logger.debug(f"Retrieving record for {self.model.__name__}")
+        logger.debug("Retrieving record for model %s", self.model.__name__)
         filters = [
             *args,
             *[getattr(self.model, k) == v for k, v in kwargs.items() if v is not None],
@@ -33,7 +34,10 @@ class CRUDRepository:
         self, db: Session, *args, skip: int = 0, limit: int = 100, **kwargs
     ) -> List[ModelType]:
         logger.debug(
-            f"Retrieving records for {self.model.__name__} with skip {skip} and limit {limit}"
+            "Retrieving records for %s with skip %s and limit %s",
+            self.model.__name__,
+            skip,
+            limit,
         )
         filters = [
             *args,
@@ -53,7 +57,7 @@ class CRUDRepository:
         try:
             db.commit()
             db.refresh(db_obj)
-        except Exception as e:
+        except Exception:
             db.rollback()
             raise
 
@@ -71,7 +75,7 @@ class CRUDRepository:
         try:
             db.commit()
             db.refresh(db_obj)
-        except Exception as e:
+        except Exception:
             db.rollback()
             raise
 

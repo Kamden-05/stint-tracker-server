@@ -1,8 +1,10 @@
-from app.repositories.base_crud import CRUDRepository
-from app.models.lap_model import Lap
+import logging
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-import logging
+
+from app.models.lap_model import Lap
+from app.repositories.base_crud import CRUDRepository
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +16,10 @@ def get_many(
     self, db: Session, *args, skip: int = 0, limit: int = 100, **kwargs
 ) -> list[Lap]:
     logger.debug(
-        f"Retrieving records for {self.model.__name__} with skip {skip} and limit {limit}"
+        "Retrieving records for %s with skip %s and limit %s",
+        self.model.__name__,
+        skip,
+        limit,
     )
     filters = [
         *args,

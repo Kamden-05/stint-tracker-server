@@ -1,11 +1,11 @@
-from fastapi import APIRouter, HTTPException, status
-from app.schemas.pit_schemas import PitRead, PitCreate, PitUpdate
-
-from app.models.pitstop_model import PitStop
-from app.repositories import pit_crud, stint_crud
-from app.dependencies import DbSessionDep, SessionCarDep
-
 import logging
+
+from fastapi import APIRouter, HTTPException, status
+
+from app.dependencies import DbSessionDep, SessionCarDep
+from app.models import PitStop
+from app.repositories import pit_crud
+from app.schemas import PitCreate, PitRead, PitUpdate
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ def update_pit(car: SessionCarDep, pit_update: PitUpdate, db: DbSessionDep):
         db,
         PitStop.session_id == car.session_id,
         PitStop.car_id == car.car_id,
-        PitStop.road_exit_time == None,
+        PitStop.road_exit_time is None,
     )
 
     if not pitstops:
