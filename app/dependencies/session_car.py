@@ -1,9 +1,11 @@
+import logging
 from typing import Annotated
+
 from fastapi import Depends, HTTPException, status
+
+from app.dependencies.db_session import DbSessionDep
 from app.models.session_model import SessionCar
 from app.repositories import session_car_crud
-from app.dependencies.db_session import DbSessionDep
-import logging
 
 logger = logging.getLogger(__name__)
 
