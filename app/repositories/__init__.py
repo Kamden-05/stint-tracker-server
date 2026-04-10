@@ -3,6 +3,7 @@ from app.repositories.stint_crud import stint_crud
 from app.repositories.pit_crud import pit_crud
 from app.repositories.lap_crud import lap_crud
 from app.repositories.session_car_crud import session_car_crud
+from app.repositories.api_crud import api_crud
 
 
 __all__ = [

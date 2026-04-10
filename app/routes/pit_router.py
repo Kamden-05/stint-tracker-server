@@ -6,6 +6,7 @@ from app.dependencies import DbSessionDep, SessionCarDep
 from app.models import PitStops
 from app.repositories import pit_crud
 from app.schemas import PitCreate, PitRead, PitUpdate
+from app.services import build_model
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +26,12 @@ def get_car_pitstops_for_session(car: SessionCarDep):
     response_model_exclude_none=True,
 )
 def create_pit(car: SessionCarDep, pit_create: PitCreate, db: DbSessionDep):
-    pit_data = pit_create.model_dump()
-    pit_data["session_id"] = car.session_id
-    pit_data["car_id"] = car.car_id
+    pitstop = build_model(
+        pit_create, PitStops, session_id=car.session_id, car_id=car.car_id
+    )
 
     try:
-        pitstop = pit_crud.create(db, pit_data)
+        pitstop = pit_crud.create(db, pitstop)
         logger.info(
             "Created pitstop %s for session %s car %s",
             pitstop.id,
@@ -49,11 +50,12 @@ def create_pit(car: SessionCarDep, pit_create: PitCreate, db: DbSessionDep):
 
 @router.patch("", response_model=PitRead)
 def update_pit(car: SessionCarDep, pit_update: PitUpdate, db: DbSessionDep):
+    # pylint: disable=singleton-comparison
     pitstops = pit_crud.get_many(
         db,
         PitStops.session_id == car.session_id,
         PitStops.car_id == car.car_id,
-        PitStops.road_exit_time is None,
+        PitStops.road_exit_time == None,
     )
 
     if not pitstops:

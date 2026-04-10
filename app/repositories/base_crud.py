@@ -51,19 +51,18 @@ class CRUDRepository:
     ) -> Optional[ModelType]:
         return self.get_one(db, session_id=session_id, car_id=car_id)
 
-    def create(self, db: Session, data: dict) -> Base:
-        db_obj = self.model(**data)
-        db.add(db_obj)
+    def create(self, db: Session, obj: ModelType) -> ModelType:
+        db.add(obj)
         try:
             db.commit()
-            db.refresh(db_obj)
+            db.refresh(obj)
         except Exception:
             db.rollback()
             raise
 
-        return db_obj
+        return obj
 
-    def update(self, db: Session, db_obj: ModelType, data: dict) -> Base:
+    def update(self, db: Session, db_obj: ModelType, data: dict) -> ModelType:
 
         for field, value in data.items():
             if field in ["session_id", "car_id"]:

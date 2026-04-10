@@ -5,9 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import DbSessionDep, SessionCarDep
-from app.models import Stints
+from app.models import Stints, Laps
 from app.repositories import lap_crud, stint_crud
 from app.schemas.lap_schemas import LapCreate, LapRead
+from app.services import build_model
 
 logger = logging.getLogger(__name__)
 
@@ -49,11 +50,14 @@ def get_car_laps_for_session(car: SessionCarDep, db: DbSessionDep):
 @router.post("/stints/{stint_id}/laps", response_model=LapRead)
 def create_lap(lap_create: LapCreate, stint: StintDep, db: DbSessionDep):
     try:
-        lap_data = lap_create.model_dump()
-        lap_data["stint_id"] = stint.id
-        lap_data["session_id"] = stint.session_id
-        lap_data["car_id"] = stint.car_id
-        lap = lap_crud.create(db, lap_data)
+        lap = build_model(
+            lap_create,
+            Laps,
+            stint_id=stint.id,
+            session_id=stint.session_id,
+            car_id=stint.car_id,
+        )
+        lap = lap_crud.create(db, lap)
     except IntegrityError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

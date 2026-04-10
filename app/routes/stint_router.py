@@ -6,6 +6,7 @@ from app.dependencies import DbSessionDep, SessionCarDep
 from app.models.stint_model import Stints
 from app.repositories import stint_crud
 from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
+from app.services import build_model
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +30,12 @@ def create_stint(
     stint_create: StintCreate,
     db: DbSessionDep,
 ):
-    stint_data = stint_create.model_dump()
-    stint_data["session_id"] = car.session_id
-    stint_data["car_id"] = car.car_id
+    stint = build_model(
+        stint_create, Stints, session_id=car.session_id, car_id=car.car_id
+    )
 
     try:
-        stint = stint_crud.create(db, stint_data)
+        stint = stint_crud.create(db, stint)
         logger.info(
             "Created stint %s for session %s car %s",
             stint.id,

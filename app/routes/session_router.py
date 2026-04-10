@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from app.dependencies import DbSessionDep, SessionCarDep
-from app.models import Sessions
+from app.models import Sessions, SessionCars
 from app.repositories import session_car_crud, session_crud
 from app.schemas import (
     RaceSessionCreate,
@@ -13,7 +13,7 @@ from app.schemas import (
     SessionCarRead,
     RaceReport,
 )
-from app.services import generate_race_summary
+from app.services import generate_race_summary, build_model
 
 logger = logging.getLogger(__name__)
 
@@ -56,12 +56,14 @@ def get_session(session_id: int, db: DbSessionDep):
 
 @router.post("", response_model=SessionCarRead)
 def create_session(session_create: RaceSessionCreate, db: DbSessionDep):
-    session_data = session_create.model_dump(
-        exclude={"car_id", "car_name", "car_class"}
+    session = build_model(
+        session_create,
+        Sessions,
+        exclude={"car_id", "car_name", "car_class"},
     )
 
     try:
-        session_crud.create(db, session_data)
+        session_crud.create(db, session)
         logger.info(
             "Creating session for id=%s date=%s",
             session_create.id,
@@ -72,15 +74,15 @@ def create_session(session_create: RaceSessionCreate, db: DbSessionDep):
             "Session id=%s already exists, skipping creation", session_create.id
         )
 
-    car_data = {
-        "session_id": session_create.id,
-        "car_id": session_create.car_id,
-        "car_name": session_create.car_name,
-        "car_class": session_create.car_class,
-    }
+    session_car = SessionCars(
+        session_id=session_create.id,
+        car_id=session_create.car_id,
+        car_name=session_create.car_name,
+        car_class=session_create.car_class,
+    )
 
     try:
-        session_car = session_car_crud.create(db, car_data)
+        session_car = session_car_crud.create(db, session_car)
         logger.info(
             "Creating car for session with id=%s date=%s",
             session_create.car_id,
