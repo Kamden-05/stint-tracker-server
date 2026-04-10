@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import TIMESTAMP, String
+from sqlalchemy import TIMESTAMP, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -17,7 +17,9 @@ class ApiKey(Base):
     )
     name: Mapped[Optional[str]] = mapped_column(String)
     active: Mapped[bool] = mapped_column(default=True)
-    is_admin: Mapped[bool] = mapped_column(default=False)
+    is_admin: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default="false"
+    )
 
     # pylint: disable=not-callable
     created_at: Mapped[datetime] = mapped_column(
