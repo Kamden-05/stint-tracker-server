@@ -45,8 +45,13 @@ def validate_api_key(db: DbSessionDep, raw_key: str) -> ApiKey:
 
 def get_api_key(
     db: DbSessionDep,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    x_api_key: str = Header(None, alias="X-API-Key"),
 ) -> ApiKey:
+    if not x_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing API key",
+        )
     return validate_api_key(db, x_api_key)
 
 
