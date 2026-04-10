@@ -9,9 +9,13 @@ from app.schemas.session_schemas import (
     SessionCarRead,
 )
 
+from app.schemas.report_schemas import RaceReport
+
 from app.database.db import get_db
-from app.models import RaceSession, SessionCar
+from app.models import RaceSession
 from app.repositories import session_crud, session_car_crud
+from app.services import generate_race_summary
+from app.dependencies import SessionCarDep, DbSessionDep
 
 import logging
 
@@ -19,12 +23,10 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
-DbSession = Annotated[Session, Depends(get_db)]
-
 
 @router.get("", response_model=list[RaceSessionRead])
 def list_sessions(
-    db: DbSession,
+    db: DbSessionDep,
     session_date: Optional[str] = None,
     track: Optional[str] = None,
 ):
@@ -44,7 +46,7 @@ def list_sessions(
 
 
 @router.get("/{session_id}", response_model=RaceSessionRead)
-def get_session(session_id: int, db: DbSession):
+def get_session(session_id: int, db: DbSessionDep):
     session = session_crud.get_one(db, RaceSession.id == session_id)
 
     if session is None:
@@ -57,7 +59,7 @@ def get_session(session_id: int, db: DbSession):
 
 
 @router.post("", response_model=SessionCarRead)
-def create_session(session_create: RaceSessionCreate, db: DbSession):
+def create_session(session_create: RaceSessionCreate, db: DbSessionDep):
     session_data = session_create.model_dump(
         exclude={"car_id", "car_name", "car_class"}
     )
@@ -96,3 +98,8 @@ def create_session(session_create: RaceSessionCreate, db: DbSession):
         )
 
     return session_car
+
+
+@router.get("/{session_id}/cars/{car_id}/summary", response_model=RaceReport)
+def get_race_summary(car: SessionCarDep, db: DbSessionDep):
+    return generate_race_summary(car, db)
