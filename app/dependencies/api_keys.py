@@ -1,6 +1,6 @@
 import hashlib
 import secrets
-from typing import Optional, Annotated
+from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, status
 
