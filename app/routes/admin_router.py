@@ -45,7 +45,9 @@ def get_keys(db: DbSessionDep):
 
 @router.post("/api-keys", response_model=ApiKeyCreateResponse)
 def post_key(payload: ApiKeyCreate, db: DbSessionDep):
-    return create_api_key(db, payload.name)
+    key = create_api_key(db, payload.name)
+
+    return ApiKeyCreateResponse(api_key=key)
 
 
 @router.patch("/api-keys/{key_id}/revoke", response_model=ApiKeyRead)
@@ -80,3 +82,8 @@ def rotate_key(key: KeyDep, db: DbSessionDep):
     updated_key = api_crud.update(db, key, {"key_hash": key_hash})
 
     return updated_key
+
+
+@router.delete("/api-keys/{key_id}", status_code=status.HTTP_204_NO_CONTENT)
+def hard_delete_key(key: KeyDep, db: DbSessionDep):
+    api_crud.delete(db, key)

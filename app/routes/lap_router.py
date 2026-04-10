@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
-from app.dependencies import DbSessionDep, SessionCarDep
+from app.dependencies import DbSessionDep, SessionCarDep, get_api_key
 from app.models import Stints, Laps
 from app.repositories import lap_crud, stint_crud
 from app.schemas.lap_schemas import LapCreate, LapRead
@@ -12,7 +12,10 @@ from app.services import build_model
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(tags=["laps"])
+router = APIRouter(
+    tags=["laps"],
+    dependencies=[Depends(get_api_key)],
+)
 
 
 def get_stint(stint_id: int, db: DbSessionDep) -> Stints:

@@ -1,8 +1,8 @@
 import logging
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 
-from app.dependencies import DbSessionDep, SessionCarDep
+from app.dependencies import DbSessionDep, SessionCarDep, get_api_key
 from app.models import PitStops
 from app.repositories import pit_crud
 from app.schemas import PitCreate, PitRead, PitUpdate
@@ -11,7 +11,9 @@ from app.services import build_model
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/sessions/{session_id}/cars/{car_id}/pitstops", tags=["pitstops"]
+    prefix="/sessions/{session_id}/cars/{car_id}/pitstops",
+    tags=["pitstops"],
+    dependencies=[Depends(get_api_key)],
 )
 
 

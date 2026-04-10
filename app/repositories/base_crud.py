@@ -79,3 +79,13 @@ class CRUDRepository:
             raise
 
         return db_obj
+
+    def delete(self, db: Session, db_obj: ModelType) -> ModelType:
+        db.delete(db_obj)
+        try:
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
+
+        return db_obj

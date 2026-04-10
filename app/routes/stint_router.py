@@ -1,8 +1,8 @@
 import logging
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 
-from app.dependencies import DbSessionDep, SessionCarDep
+from app.dependencies import DbSessionDep, SessionCarDep, get_api_key
 from app.models.stint_model import Stints
 from app.repositories import stint_crud
 from app.schemas.stint_schemas import StintCreate, StintRead, StintUpdate
@@ -11,7 +11,9 @@ from app.services import build_model
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/sessions/{session_id}/cars/{car_id}/stints", tags=["stints"]
+    prefix="/sessions/{session_id}/cars/{car_id}/stints",
+    tags=["stints"],
+    dependencies=[Depends(get_api_key)],
 )
 
 

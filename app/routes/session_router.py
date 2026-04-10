@@ -1,10 +1,10 @@
 import logging
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.exc import IntegrityError
 
-from app.dependencies import DbSessionDep, SessionCarDep
+from app.dependencies import DbSessionDep, SessionCarDep, get_api_key
 from app.models import Sessions, SessionCars
 from app.repositories import session_car_crud, session_crud
 from app.schemas import (
@@ -17,7 +17,11 @@ from app.services import generate_race_summary, build_model
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/sessions", tags=["sessions"])
+router = APIRouter(
+    prefix="/sessions",
+    tags=["sessions"],
+    dependencies=[Depends(get_api_key)],
+)
 
 
 @router.get("", response_model=list[RaceSessionRead])
