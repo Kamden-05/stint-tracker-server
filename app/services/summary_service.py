@@ -66,8 +66,21 @@ def generate_race_summary(car: SessionCars, db: DbSessionDep) -> RaceReport:
         key = int(p.service_start_time)
         pitstop_map[key] = p
 
-    for lap in laps:
-        lap_times[lap.stint_id].append(lap.lap_time)
+    for i, lap in enumerate(laps):
+        derived_time = None
+
+        if lap.lap_time > 0:
+            derived_time = lap.lap_time
+        else:
+            if i > 0:
+                derived_time = lap.end_time - laps[i - 1].end_time
+            else:
+                stint = next((s for s in stints if s.id == laps.stint_id), None)
+                if stint:
+                    derived_time = lap.end_time - stint.start_time
+
+        if derived_time is not None:
+            lap_times[lap.stint_id].append(derived_time)
 
     for stint in stints:
         p_key = int(stint.end_time)
